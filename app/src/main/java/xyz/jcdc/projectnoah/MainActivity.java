@@ -214,6 +214,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                 for (int x = mAdapter.getLayers().size() - 1; x > -1; x--){
                     if(mAdapter.getLayers().get(x).getCategory().equals(Constants.LAYER_WEATHER_DOPPLER)){
                         if(mAdapter.getLayers().get(x).getAction().equals(action)){
+                            removeDopplerFromMap(action);
                             mAdapter.getLayers().remove(x);
                             Log.d("MainActivity", "Doppler removed: ");
                         }
@@ -232,6 +233,46 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
             }
         }
 
+    }
+
+    private void removeDopplerFromMap(String action){
+        switch (action){
+            case Constants.ACTION_WEATHER_DOPPLER_APARRI:
+                dopplerAparriGroundOverlay.remove();
+                break;
+
+            case Constants.ACTION_WEATHER_DOPPLER_BAGUIO:
+                dopplerBaguioGroundOverlay.remove();
+                break;
+
+            case Constants.ACTION_WEATHER_DOPPLER_BALER:
+                dopplerBalerGroundOverlay.remove();
+                break;
+
+            case Constants.ACTION_WEATHER_DOPPLER_CEBU:
+                dopplerCebuGroundOverlay.remove();
+                break;
+
+            case Constants.ACTION_WEATHER_DOPPLER_HINATAUAN:
+                dopplerHinatuanGroundOverlay.remove();
+                break;
+
+            case Constants.ACTION_WEATHER_DOPPLER_SUBIC:
+                dopplerSubicGroundOverlay.remove();
+                break;
+
+            case Constants.ACTION_WEATHER_DOPPLER_TAGAYTAY:
+                dopplerTagaytayGroundOverlay.remove();
+                break;
+
+            case Constants.ACTION_WEATHER_DOPPLER_TAMPAKAN:
+                dopplerTampakanGroundOverlay.remove();
+                break;
+
+            case Constants.ACTION_WEATHER_DOPPLER_VIRAC:
+                dopplerViracGroundOverlay.remove();
+                break;
+        }
     }
 
     private boolean isDopplerLayerExists(String action){
