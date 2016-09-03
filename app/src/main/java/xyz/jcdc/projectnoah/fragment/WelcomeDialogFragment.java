@@ -1,16 +1,22 @@
 package xyz.jcdc.projectnoah.fragment;
 
+import android.content.Context;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.app.DialogFragment;
+import android.support.v7.widget.AppCompatAutoCompleteTextView;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.TextView;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
@@ -33,6 +39,8 @@ import xyz.jcdc.projectnoah.chance_of_rain.adapter.ChanceOfRainAdapter;
 
 public class WelcomeDialogFragment extends DialogFragment implements View.OnClickListener {
 
+    private Context context;
+
     private ArrayList<Location> locations;
 
     private RecyclerView dataRecyclerView;
@@ -40,9 +48,14 @@ public class WelcomeDialogFragment extends DialogFragment implements View.OnClic
 
     private Button close;
 
+    private AppCompatAutoCompleteTextView location;
+    private TextView location_textview;
+
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        context = getContext();
+
         View view = inflater.inflate(R.layout.fragment_dialog_welcome_rotonda, container);
         Bundle args = getArguments();
 
@@ -61,16 +74,46 @@ public class WelcomeDialogFragment extends DialogFragment implements View.OnClic
         if(args.getSerializable("locations") != null){
             locations = (ArrayList<Location>) args.getSerializable("locations");
 
-            for(Location location : locations){
-                if(location.getLocation().equals("Manila, Metro Manila")){
-                    chanceOfRainAdapter.setDatas(location.getData());
-                    chanceOfRainAdapter.notifyDataSetChanged();
-                }
-            }
+            setLocations4hour("Manila, Metro Manila");
         }else {
             getDialog().dismiss();
         }
+
+        ArrayList<String> location_string = new ArrayList<>();
+
+        for(Location loc : locations){
+            location_string.add(loc.getLocation());
+        }
+
+        location_textview = (TextView) view.findViewById(R.id.location);
+
+        location = (AppCompatAutoCompleteTextView) view.findViewById(R.id.location_autocomplete);
+        String[] locationsArray = location_string.toArray(new String[location_string.size()]);
+        ArrayAdapter<String> adapter = new ArrayAdapter<String>(context, android.R.layout.simple_list_item_1, locationsArray);
+
+        location.setAdapter(adapter);
+
+        location.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                location_textview.setText(adapterView.getItemAtPosition(i).toString());
+                setLocations4hour(adapterView.getItemAtPosition(i).toString());
+
+                InputMethodManager imm = (InputMethodManager)context.getSystemService(Context.INPUT_METHOD_SERVICE);
+                imm.hideSoftInputFromWindow(location.getWindowToken(), 0);
+            }
+        });
+
         return view;
+    }
+
+    private void setLocations4hour(String location_){
+        for(Location location : locations){
+            if(location.getLocation().equals(location_)){
+                chanceOfRainAdapter.setDatas(location.getData());
+                chanceOfRainAdapter.notifyDataSetChanged();
+            }
+        }
     }
 
     @Override
