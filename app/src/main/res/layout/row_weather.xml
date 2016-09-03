@@ -94,6 +94,42 @@
                 android:text="12-hour Rainfall Contour"
                 android:id="@+id/rowContour12" />
 
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingLeft="12dp"
+                android:paddingTop="10dp"
+                android:textAppearance="@style/TextAppearanceDrawer"
+                android:text="24-hour Rainfall Contour"
+                android:id="@+id/rowContour24" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingLeft="12dp"
+                android:paddingTop="10dp"
+                android:textAppearance="@style/TextAppearanceDrawer"
+                android:text="Temperature Contour"
+                android:id="@+id/rowContourTemperature" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingLeft="12dp"
+                android:paddingTop="10dp"
+                android:textAppearance="@style/TextAppearanceDrawer"
+                android:text="Pressure Contour"
+                android:id="@+id/rowContourPressure" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingLeft="12dp"
+                android:paddingTop="10dp"
+                android:textAppearance="@style/TextAppearanceDrawer"
+                android:text="Humidity Contour"
+                android:id="@+id/rowContourHumidity" />
+
         </LinearLayout>
 
 

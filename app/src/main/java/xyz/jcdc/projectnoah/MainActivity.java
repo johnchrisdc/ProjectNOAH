@@ -39,6 +39,7 @@ import xyz.jcdc.projectnoah.contour.LatestContour;
 import xyz.jcdc.projectnoah.fragment.WelcomeDialogFragment;
 import xyz.jcdc.projectnoah.helper.Helper;
 import xyz.jcdc.projectnoah.objects.DrawerItem;
+import xyz.jcdc.projectnoah.objects.Layer;
 
 public class MainActivity extends AppCompatActivity implements OnMapReadyCallback, DrawerAdapter.OnDrawerItemClickedListener {
 
@@ -65,6 +66,8 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     private GroundOverlay contourGroundOverlay;
 
     private String current_contour_action;
+
+    private ArrayList<Layer> layers;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -93,7 +96,9 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         drawerItems.add( new DrawerItem(R.drawable.criticalbtn, "Critical Facilities"));
         drawerItems.add( new DrawerItem(R.drawable.ovindexbtn, "Dengue Monitoring"));
 
-        mAdapter = new DrawerAdapter(drawerItems);
+        layers = new ArrayList<Layer>();
+
+        mAdapter = new DrawerAdapter(drawerItems, layers);
         mRecyclerView.setAdapter(mAdapter);
         mLayoutManager = new LinearLayoutManager(this);
         mRecyclerView.setLayoutManager(mLayoutManager);
@@ -150,14 +155,66 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
 
     @Override
     public void onDrawerItemClicked(String action) {
-        Log.d("MainActivity", action);
         drawer.closeDrawers();
 
-        if (action.equals(Constants.ACTION_WEATHER_CONTOUR_1) || action.equals(Constants.ACTION_WEATHER_CONTOUR_3) ||
-                action.equals(Constants.ACTION_WEATHER_CONTOUR_6) || action.equals(Constants.ACTION_WEATHER_CONTOUR_12)){
-            applyContour(action);
+        if ( action.equals(Constants.ACTION_WEATHER_CONTOUR_1) || action.equals(Constants.ACTION_WEATHER_CONTOUR_3) ||
+                action.equals(Constants.ACTION_WEATHER_CONTOUR_6) || action.equals(Constants.ACTION_WEATHER_CONTOUR_12) ||
+                action.equals(Constants.ACTION_WEATHER_CONTOUR_24) || action.equals(Constants.ACTION_WEATHER_CONTOUR_TEMPERATURE) ||
+                action.equals(Constants.ACTION_WEATHER_CONTOUR_PRESSURE) || action.equals(Constants.ACTION_WEATHER_CONTOUR_HUMIDITY) ){
+
+
+            if(isContourLayerExists(action)){
+                if (contourGroundOverlay != null){
+                    contourGroundOverlay.remove();
+                }
+
+                //This layer does not support multiple layers, so remove it if it exists
+                int x=0;
+                for (Layer l : mAdapter.getLayers()){
+                    if(l.getCategory().equals(Constants.LAYER_WEATHER_CONTOUR)){
+                        Log.d("MainActivity", "DELETING");
+                        mAdapter.getLayers().remove(x);
+                    }
+                    x++;
+                }
+
+            }else {
+                applyContour(action);
+
+                Layer layer = new Layer();
+                layer.setCategory(Constants.LAYER_WEATHER_CONTOUR);
+                layer.setAction(action);
+
+                //This layer does not support multiple layers, so remove it if it exists
+                int x=0;
+                for (Layer l : layers){
+                    if(l.getCategory().equals(Constants.LAYER_WEATHER_CONTOUR)){
+                        layers.remove(x);
+                    }
+                    x++;
+                }
+
+                mAdapter.getLayers().add(layer);
+            }
+
+            for (Layer l : mAdapter.getLayers()){
+                Log.d("MainActivity", l.getAction());
+            }
         }
 
+    }
+
+    private boolean isContourLayerExists(String action){
+        int x = 0;
+        for (Layer l : layers){
+            if(l.getCategory().equals(Constants.LAYER_WEATHER_CONTOUR)){
+                if(l.getAction().equals(action)){
+                    return true;
+                }
+            }
+            x++;
+        }
+        return false;
     }
 
     private void applyContour(String action){
@@ -208,6 +265,23 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
 
                 if(current_contour_action.equals(Constants.ACTION_WEATHER_CONTOUR_12)){
                     latestContour = MainActivity.this.latestContours.get(3);
+                }
+
+                /////
+                if(current_contour_action.equals(Constants.ACTION_WEATHER_CONTOUR_24)){
+                    latestContour = MainActivity.this.latestContours.get(4);
+                }
+
+                if(current_contour_action.equals(Constants.ACTION_WEATHER_CONTOUR_TEMPERATURE)){
+                    latestContour = MainActivity.this.latestContours.get(5);
+                }
+
+                if(current_contour_action.equals(Constants.ACTION_WEATHER_CONTOUR_PRESSURE)){
+                    latestContour = MainActivity.this.latestContours.get(6);
+                }
+
+                if(current_contour_action.equals(Constants.ACTION_WEATHER_CONTOUR_HUMIDITY)){
+                    latestContour = MainActivity.this.latestContours.get(7);
                 }
 
                 Log.d("MainActivity", "DEBUG CONTOUR URL: " + latestContour.getUrl());

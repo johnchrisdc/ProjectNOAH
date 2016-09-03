@@ -4,7 +4,9 @@ package xyz.jcdc.projectnoah.adapter;
  * Created by jcdc on 8/9/2016.
  */
 
+import android.graphics.Color;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.util.SparseBooleanArray;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -18,10 +20,12 @@ import java.util.ArrayList;
 import xyz.jcdc.projectnoah.Constants;
 import xyz.jcdc.projectnoah.R;
 import xyz.jcdc.projectnoah.objects.DrawerItem;
+import xyz.jcdc.projectnoah.objects.Layer;
 
 public class DrawerAdapter  extends RecyclerView.Adapter<DrawerAdapter.ViewHolder> {
 
     private ArrayList<DrawerItem> drawerItems;
+    private ArrayList<Layer> layers;
 
     private int selectedItem = -1;
 
@@ -67,7 +71,8 @@ public class DrawerAdapter  extends RecyclerView.Adapter<DrawerAdapter.ViewHolde
 
         TextView rowContour;
         LinearLayout subItemsContour;
-        TextView itemContour_1, itemContour_3, itemContour_6, itemContour_12;
+        TextView itemContour_1, itemContour_3, itemContour_6, itemContour_12, itemContour_24
+                , itemContour_temperature, itemContour_pressure, itemContour_humidity;
 
         public WeatherViewHolder(View itemView) {
             super(itemView);
@@ -84,6 +89,19 @@ public class DrawerAdapter  extends RecyclerView.Adapter<DrawerAdapter.ViewHolde
             itemContour_3 = (TextView) itemView.findViewById(R.id.rowContour3);
             itemContour_6 = (TextView) itemView.findViewById(R.id.rowContour6);
             itemContour_12 = (TextView) itemView.findViewById(R.id.rowContour12);
+            itemContour_24 = (TextView) itemView.findViewById(R.id.rowContour24);
+            itemContour_temperature = (TextView) itemView.findViewById(R.id.rowContourTemperature);
+            itemContour_pressure = (TextView) itemView.findViewById(R.id.rowContourPressure);
+            itemContour_humidity = (TextView) itemView.findViewById(R.id.rowContourHumidity);
+
+            itemContour_1.setTag(Constants.ACTION_WEATHER_CONTOUR_1);
+            itemContour_3.setTag(Constants.ACTION_WEATHER_CONTOUR_3);
+            itemContour_6.setTag(Constants.ACTION_WEATHER_CONTOUR_6);
+            itemContour_12.setTag(Constants.ACTION_WEATHER_CONTOUR_12);
+            itemContour_24.setTag(Constants.ACTION_WEATHER_CONTOUR_24);
+            itemContour_temperature.setTag(Constants.ACTION_WEATHER_CONTOUR_TEMPERATURE);
+            itemContour_pressure.setTag(Constants.ACTION_WEATHER_CONTOUR_PRESSURE);
+            itemContour_humidity.setTag(Constants.ACTION_WEATHER_CONTOUR_HUMIDITY);
         }
     }
 
@@ -96,8 +114,9 @@ public class DrawerAdapter  extends RecyclerView.Adapter<DrawerAdapter.ViewHolde
         }
     }
 
-    public DrawerAdapter(ArrayList<DrawerItem> drawerItems){
+    public DrawerAdapter(ArrayList<DrawerItem> drawerItems, ArrayList<Layer> layers){
         this.drawerItems = drawerItems;
+        this.layers = layers;
 
         for (int i = 0; i < drawerItems.size(); i++) {
             expandState.append(i, false);
@@ -175,6 +194,7 @@ public class DrawerAdapter  extends RecyclerView.Adapter<DrawerAdapter.ViewHolde
                 @Override
                 public void onClick(View view) {
                     weatherViewHolder.subItemsContour.setVisibility(weatherViewHolder.subItemsContour.getVisibility() == View.VISIBLE ? View.GONE : View.VISIBLE);
+                    isContourLayerActive(weatherViewHolder.subItemsContour);
                 }
             });
 
@@ -183,6 +203,7 @@ public class DrawerAdapter  extends RecyclerView.Adapter<DrawerAdapter.ViewHolde
                 @Override
                 public void onClick(View view) {
                     onDrawerItemClickedListener.onDrawerItemClicked(Constants.ACTION_WEATHER_CONTOUR_1);
+                    isContourLayerActive(weatherViewHolder.subItemsContour);
                 }
             });
 
@@ -190,6 +211,7 @@ public class DrawerAdapter  extends RecyclerView.Adapter<DrawerAdapter.ViewHolde
                 @Override
                 public void onClick(View view) {
                     onDrawerItemClickedListener.onDrawerItemClicked(Constants.ACTION_WEATHER_CONTOUR_3);
+                    isContourLayerActive(weatherViewHolder.subItemsContour);
                 }
             });
 
@@ -197,6 +219,7 @@ public class DrawerAdapter  extends RecyclerView.Adapter<DrawerAdapter.ViewHolde
                 @Override
                 public void onClick(View view) {
                     onDrawerItemClickedListener.onDrawerItemClicked(Constants.ACTION_WEATHER_CONTOUR_6);
+                    isContourLayerActive(weatherViewHolder.subItemsContour);
                 }
             });
 
@@ -204,8 +227,42 @@ public class DrawerAdapter  extends RecyclerView.Adapter<DrawerAdapter.ViewHolde
                 @Override
                 public void onClick(View view) {
                     onDrawerItemClickedListener.onDrawerItemClicked(Constants.ACTION_WEATHER_CONTOUR_12);
+                    isContourLayerActive(weatherViewHolder.subItemsContour);
                 }
             });
+
+            weatherViewHolder.itemContour_24.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    onDrawerItemClickedListener.onDrawerItemClicked(Constants.ACTION_WEATHER_CONTOUR_24);
+                    isContourLayerActive(weatherViewHolder.subItemsContour);
+                }
+            });
+
+            weatherViewHolder.itemContour_temperature.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    onDrawerItemClickedListener.onDrawerItemClicked(Constants.ACTION_WEATHER_CONTOUR_TEMPERATURE);
+                    isContourLayerActive(weatherViewHolder.subItemsContour);
+                }
+            });
+
+            weatherViewHolder.itemContour_pressure.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    onDrawerItemClickedListener.onDrawerItemClicked(Constants.ACTION_WEATHER_CONTOUR_PRESSURE);
+                    isContourLayerActive(weatherViewHolder.subItemsContour);
+                }
+            });
+
+            weatherViewHolder.itemContour_humidity.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    onDrawerItemClickedListener.onDrawerItemClicked(Constants.ACTION_WEATHER_CONTOUR_HUMIDITY);
+                    isContourLayerActive(weatherViewHolder.subItemsContour);
+                }
+            });
+
 
         }else if(holder.getItemViewType() == VIEW_HEADER){
             final HeaderViewHolder addProfileViewHolder = (HeaderViewHolder) holder;
@@ -213,6 +270,28 @@ public class DrawerAdapter  extends RecyclerView.Adapter<DrawerAdapter.ViewHolde
         }
 
 
+    }
+
+    private void isContourLayerActive(LinearLayout parent){
+
+        for (int x=0; x<parent.getChildCount(); x++){
+            TextView v = (TextView) parent.getChildAt(x);
+            v.setTextColor(Color.BLACK);
+            for (Layer layer : layers){
+                Log.d("DrawerAdapter", layer.getAction());
+                if(layer.getAction().equals(v.getTag())){
+                    v.setTextColor(Color.RED);
+                }
+            }
+        }
+    }
+
+    public ArrayList<Layer> getLayers() {
+        return layers;
+    }
+
+    public void setLayers(ArrayList<Layer> layers) {
+        this.layers = layers;
     }
 
     public int getSelectedItem() {

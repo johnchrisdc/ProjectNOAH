@@ -9,8 +9,15 @@ public class Constants {
 
     public static final String LATEST_CONTOUR = "http://noah.dost.gov.ph/api/latest_contour";
 
+
+    public static final String LAYER_WEATHER_CONTOUR = "weather_contour";
     public static final String ACTION_WEATHER_CONTOUR_1 = "1_hour_rainfall_contour";
     public static final String ACTION_WEATHER_CONTOUR_3 = "3_hour_rainfall_contour";
     public static final String ACTION_WEATHER_CONTOUR_6 = "6_hour_rainfall_contour";
     public static final String ACTION_WEATHER_CONTOUR_12 = "12_hour_rainfall_contour";
+    public static final String ACTION_WEATHER_CONTOUR_24 = "24_hour_rainfall_contour";
+    public static final String ACTION_WEATHER_CONTOUR_TEMPERATURE = "temperature_contour";
+    public static final String ACTION_WEATHER_CONTOUR_PRESSURE = "pressure_contour";
+    public static final String ACTION_WEATHER_CONTOUR_HUMIDITY = "humidity_contour";
+
 }
