@@ -190,12 +190,10 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                 layer.setAction(action);
 
                 //This layer does not support multiple layers, so remove it if it exists
-                int x=0;
-                for (Layer l : layers){
-                    if(l.getCategory().equals(Constants.LAYER_WEATHER_CONTOUR)){
-                        layers.remove(x);
+                for (int x = mAdapter.getLayers().size() - 1; x > -1; x--){
+                    if(mAdapter.getLayers().get(x).getCategory().equals(Constants.LAYER_WEATHER_CONTOUR)){
+                        mAdapter.getLayers().remove(x);
                     }
-                    x++;
                 }
 
                 mAdapter.getLayers().add(layer);
@@ -238,39 +236,48 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     private void removeDopplerFromMap(String action){
         switch (action){
             case Constants.ACTION_WEATHER_DOPPLER_APARRI:
-                dopplerAparriGroundOverlay.remove();
+                if (dopplerAparriGroundOverlay != null)
+                    dopplerAparriGroundOverlay.remove();
                 break;
 
             case Constants.ACTION_WEATHER_DOPPLER_BAGUIO:
-                dopplerBaguioGroundOverlay.remove();
+                if (dopplerBaguioGroundOverlay != null)
+                    dopplerBaguioGroundOverlay.remove();
                 break;
 
             case Constants.ACTION_WEATHER_DOPPLER_BALER:
-                dopplerBalerGroundOverlay.remove();
+                if (dopplerBalerGroundOverlay != null)
+                    dopplerBalerGroundOverlay.remove();
                 break;
 
             case Constants.ACTION_WEATHER_DOPPLER_CEBU:
-                dopplerCebuGroundOverlay.remove();
+                if (dopplerCebuGroundOverlay != null)
+                    dopplerCebuGroundOverlay.remove();
                 break;
 
             case Constants.ACTION_WEATHER_DOPPLER_HINATAUAN:
-                dopplerHinatuanGroundOverlay.remove();
+                if (dopplerHinatuanGroundOverlay != null)
+                    dopplerHinatuanGroundOverlay.remove();
                 break;
 
             case Constants.ACTION_WEATHER_DOPPLER_SUBIC:
-                dopplerSubicGroundOverlay.remove();
+                if (dopplerSubicGroundOverlay != null)
+                    dopplerSubicGroundOverlay.remove();
                 break;
 
             case Constants.ACTION_WEATHER_DOPPLER_TAGAYTAY:
-                dopplerTagaytayGroundOverlay.remove();
+                if (dopplerTagaytayGroundOverlay != null)
+                    dopplerTagaytayGroundOverlay.remove();
                 break;
 
             case Constants.ACTION_WEATHER_DOPPLER_TAMPAKAN:
-                dopplerTampakanGroundOverlay.remove();
+                if (dopplerTampakanGroundOverlay != null)
+                    dopplerTampakanGroundOverlay.remove();
                 break;
 
             case Constants.ACTION_WEATHER_DOPPLER_VIRAC:
-                dopplerViracGroundOverlay.remove();
+                if (dopplerViracGroundOverlay != null)
+                    dopplerViracGroundOverlay.remove();
                 break;
         }
     }
