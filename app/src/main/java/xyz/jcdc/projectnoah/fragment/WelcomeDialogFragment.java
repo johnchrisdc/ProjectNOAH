@@ -23,7 +23,10 @@ import com.google.gson.reflect.TypeToken;
 
 import java.io.IOException;
 import java.lang.reflect.Type;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
@@ -32,6 +35,7 @@ import xyz.jcdc.projectnoah.R;
 import xyz.jcdc.projectnoah.chance_of_rain.Data;
 import xyz.jcdc.projectnoah.chance_of_rain.Location;
 import xyz.jcdc.projectnoah.chance_of_rain.adapter.ChanceOfRainAdapter;
+import xyz.jcdc.projectnoah.helper.DateHelper;
 
 /**
  * Created by jcdc on 9/1/2016.
@@ -50,6 +54,7 @@ public class WelcomeDialogFragment extends DialogFragment implements View.OnClic
 
     private AppCompatAutoCompleteTextView location;
     private TextView location_textview;
+    private TextView date;
 
     @Nullable
     @Override
@@ -86,6 +91,14 @@ public class WelcomeDialogFragment extends DialogFragment implements View.OnClic
         }
 
         location_textview = (TextView) view.findViewById(R.id.location);
+        date = (TextView) view.findViewById(R.id.date);
+
+
+        DateFormat dateFormat = new SimpleDateFormat("MMM dd, EEEE");
+        Date datex = new Date();
+
+        date.setText(dateFormat.format(datex));
+        DateHelper.loadDateToTextView(date);
 
         location = (AppCompatAutoCompleteTextView) view.findViewById(R.id.location_autocomplete);
         String[] locationsArray = location_string.toArray(new String[location_string.size()]);
