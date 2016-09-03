@@ -211,15 +211,13 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
             }
 
             if (isDopplerLayerExists(action)){
-                int x=0;
-                for (Layer layer : layers){
-                    if (layer.getCategory().equals(Constants.LAYER_WEATHER_DOPPLER)){
-                        if (layer.getAction().equals(action)){
-                            Log.d("MainActivity" , "Removing Doppler Action " + layer.getAction());
-                            layers.remove(x);
+                for (int x = mAdapter.getLayers().size() - 1; x > -1; x--){
+                    if(mAdapter.getLayers().get(x).getCategory().equals(Constants.LAYER_WEATHER_DOPPLER)){
+                        if(mAdapter.getLayers().get(x).getAction().equals(action)){
+                            mAdapter.getLayers().remove(x);
+                            Log.d("MainActivity", "Doppler removed: ");
                         }
                     }
-                    x++;
                 }
             }else {
                 Layer layer = new Layer();
