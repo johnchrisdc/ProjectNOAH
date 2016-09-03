@@ -1,10 +1,12 @@
 package xyz.jcdc.projectnoah.chance_of_rain;
 
+import java.io.Serializable;
+
 /**
  * Created by jcdc on 9/2/2016.
  */
 
-public class Data {
+public class Data implements Serializable{
     private double percent_chance_of_rain;
     private String chance_of_rain;
     private String icon;
