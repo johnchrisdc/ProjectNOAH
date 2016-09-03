@@ -142,6 +142,97 @@
             android:text="Doppler Stations"
             android:id="@+id/rowDoppler" />
 
+        <LinearLayout
+            android:visibility="gone"
+            android:layout_marginLeft="25dp"
+            android:id="@+id/sub_items_doppler"
+            android:orientation="vertical"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingLeft="12dp"
+                android:paddingTop="10dp"
+                android:textAppearance="@style/TextAppearanceDrawer"
+                android:text="Baguio Station"
+                android:id="@+id/rowDopplerBaguio" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingLeft="12dp"
+                android:paddingTop="10dp"
+                android:textAppearance="@style/TextAppearanceDrawer"
+                android:text="Subic Station"
+                android:id="@+id/rowDopplerSubic" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingLeft="12dp"
+                android:paddingTop="10dp"
+                android:textAppearance="@style/TextAppearanceDrawer"
+                android:text="Tagaytay Station"
+                android:id="@+id/rowDopplerTagaytay" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingLeft="12dp"
+                android:paddingTop="10dp"
+                android:textAppearance="@style/TextAppearanceDrawer"
+                android:text="Cebu Station"
+                android:id="@+id/rowDopplerCebu" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingLeft="12dp"
+                android:paddingTop="10dp"
+                android:textAppearance="@style/TextAppearanceDrawer"
+                android:text="Hinatuan Station"
+                android:id="@+id/rowDopplerHinatuan" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingLeft="12dp"
+                android:paddingTop="10dp"
+                android:textAppearance="@style/TextAppearanceDrawer"
+                android:text="Tampakan Station"
+                android:id="@+id/rowDopplerTampakan" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingLeft="12dp"
+                android:paddingTop="10dp"
+                android:textAppearance="@style/TextAppearanceDrawer"
+                android:text="Aparri Station"
+                android:id="@+id/rowDopplerAparri" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingLeft="12dp"
+                android:paddingTop="10dp"
+                android:textAppearance="@style/TextAppearanceDrawer"
+                android:text="Virac Station"
+                android:id="@+id/rowDopplerVirac" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingLeft="12dp"
+                android:paddingTop="10dp"
+                android:textAppearance="@style/TextAppearanceDrawer"
+                android:text="Baler Station"
+                android:id="@+id/rowDopplerBaler" />
+
+        </LinearLayout>
+
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

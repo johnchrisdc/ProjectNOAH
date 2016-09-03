@@ -13,6 +13,7 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -30,12 +31,14 @@ import com.google.gson.reflect.TypeToken;
 
 import java.io.IOException;
 import java.lang.reflect.Type;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.concurrent.ExecutionException;
 
 import xyz.jcdc.projectnoah.adapter.DrawerAdapter;
 import xyz.jcdc.projectnoah.chance_of_rain.Location;
 import xyz.jcdc.projectnoah.contour.LatestContour;
+import xyz.jcdc.projectnoah.doppler.Doppler;
 import xyz.jcdc.projectnoah.fragment.WelcomeDialogFragment;
 import xyz.jcdc.projectnoah.helper.Helper;
 import xyz.jcdc.projectnoah.objects.DrawerItem;
@@ -60,12 +63,15 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     private LoadLatestContours loadLatestContours;
     private LoadContour loadContour;
 
+    private LoadDoppler loadDoppler;
+
     private ArrayList<LatestContour> latestContours;
+    private ArrayList<Doppler> dopplers;
 
-    private GroundOverlayOptions contourOverlay;
-    private GroundOverlay contourGroundOverlay;
+    private GroundOverlayOptions contourOverlay, dopplerBaguioOverlay;
+    private GroundOverlay contourGroundOverlay, dopplerBaguioGroundOverlay;
 
-    private String current_contour_action;
+    private String current_contour_action, current_doppler_action;
 
     private ArrayList<Layer> layers;
 
@@ -154,15 +160,10 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     }
 
     @Override
-    public void onDrawerItemClicked(String action) {
+    public void onDrawerItemClicked(String category, String action) {
         drawer.closeDrawers();
 
-        if ( action.equals(Constants.ACTION_WEATHER_CONTOUR_1) || action.equals(Constants.ACTION_WEATHER_CONTOUR_3) ||
-                action.equals(Constants.ACTION_WEATHER_CONTOUR_6) || action.equals(Constants.ACTION_WEATHER_CONTOUR_12) ||
-                action.equals(Constants.ACTION_WEATHER_CONTOUR_24) || action.equals(Constants.ACTION_WEATHER_CONTOUR_TEMPERATURE) ||
-                action.equals(Constants.ACTION_WEATHER_CONTOUR_PRESSURE) || action.equals(Constants.ACTION_WEATHER_CONTOUR_HUMIDITY) ){
-
-
+        if ( category.equals(Constants.LAYER_WEATHER_CONTOUR) ){
             if(isContourLayerExists(action)){
                 if (contourGroundOverlay != null){
                     contourGroundOverlay.remove();
@@ -177,7 +178,6 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                     }
                     x++;
                 }
-
             }else {
                 applyContour(action);
 
@@ -200,8 +200,50 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
             for (Layer l : mAdapter.getLayers()){
                 Log.d("MainActivity", l.getAction());
             }
+        }else if (category.equals(Constants.LAYER_WEATHER_DOPPLER)){
+            Log.d("MainActivity", "Doppler clicked");
+            if (loadDoppler != null){
+                loadDoppler.cancel(true);
+            }
+
+            if (isDopplerLayerExists(action)){
+                int x=0;
+                for (Layer layer : layers){
+                    if (layer.getCategory().equals(Constants.LAYER_WEATHER_DOPPLER)){
+                        if (layer.getAction().equals(action)){
+                            Log.d("MainActivity" , "Removing Doppler Action " + layer.getAction());
+                            layers.remove(x);
+                        }
+                    }
+                    x++;
+                }
+            }else {
+                Layer layer = new Layer();
+                layer.setAction(action);
+                layer.setCategory(category);
+
+                mAdapter.getLayers().add(layer);
+                current_doppler_action = action;
+
+                loadDoppler = new LoadDoppler();
+                loadDoppler.execute();
+            }
         }
 
+    }
+
+    private boolean isDopplerLayerExists(String action){
+
+        for (Layer layer : layers){
+            if (layer.getCategory().equals(Constants.LAYER_WEATHER_DOPPLER)){
+                if (layer.getAction().equals(action)){
+                    Log.d("MainActivity" , "Doppler Action exists");
+                    return true;
+                }
+            }
+        }
+
+        return false;
     }
 
     private boolean isContourLayerExists(String action){
@@ -226,8 +268,125 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
 
         loadLatestContours = new LoadLatestContours();
         loadLatestContours.execute();
+    }
 
 
+
+    private class LoadDoppler extends AsyncTask<Void, Void, ArrayList<Doppler>>{
+        @Override
+        protected ArrayList<Doppler> doInBackground(Void... voids) {
+            try {
+                return Doppler.getDopplers();
+            }catch (IOException e){
+
+            }
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(ArrayList<Doppler> dopplers) {
+            super.onPostExecute(dopplers);
+
+            if (dopplers != null){
+                Doppler current_doppler = null;
+                MainActivity.this.dopplers = dopplers;
+
+                for (Doppler doppler : dopplers){
+                    if (doppler.getVerbose_name().equalsIgnoreCase(current_doppler_action)){
+                        current_doppler = doppler;
+                    }
+                }
+
+                if (current_doppler != null){
+                    new LoadDopplerContour().execute(current_doppler);
+                }else{
+                    Log.d("MainActivity", "Doppler is null");
+                }
+
+            }
+
+        }
+    }
+
+    private class LoadDopplerContour extends AsyncTask<Doppler, Void, Bitmap>{
+        Doppler doppler;
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+            if(dopplerBaguioGroundOverlay != null){
+                dopplerBaguioGroundOverlay.remove();
+            }
+        }
+
+        @Override
+        protected Bitmap doInBackground(Doppler... params) {
+            Log.d("MainActivity", "Loading Doppler");
+
+            doppler = params[0];
+            String contour_url = doppler.getUrl();
+            int width = doppler.getSize()[0];
+            int height = doppler.getSize()[1];
+
+            Log.d("Dopller","URL: " +  contour_url);
+
+            try {
+                return Glide.
+                        with(context).
+                        load(contour_url).
+                        asBitmap().
+                        into(width, height). // Width and height
+                        get();
+            }catch (InterruptedException e){
+
+            }catch (ExecutionException e){
+
+            }
+            Log.d("MainActivity", "Error Doppler");
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Bitmap bitmap) {
+            super.onPostExecute(bitmap);
+            if(bitmap != null){
+                LatLngBounds newarkBounds = new LatLngBounds(
+                        new LatLng(doppler.getExtent()[1], doppler.getExtent()[0]),       // South west corner
+                        new LatLng(doppler.getExtent()[3], doppler.getExtent()[2]));      // North east corner
+
+                Log.d("MainActivity", "Applying countour");
+                dopplerBaguioOverlay = new GroundOverlayOptions()
+                        .image(BitmapDescriptorFactory.fromBitmap(bitmap))
+                        .transparency(.5f)
+                        .positionFromBounds(newarkBounds);
+
+                dopplerBaguioGroundOverlay = mMap.addGroundOverlay(dopplerBaguioOverlay);
+
+                double lat1 = doppler.getExtent()[1];
+                double lat2 = doppler.getExtent()[3];
+
+                double lon1 = doppler.getExtent()[0];
+                double lon2 = doppler.getExtent()[2];
+
+                double dLon = Math.toRadians(lon2 - lon1);
+
+                //convert to radians
+                lat1 = Math.toRadians(lat1);
+                lat2 = Math.toRadians(lat2);
+                lon1 = Math.toRadians(lon1);
+
+                double Bx = Math.cos(lat2) * Math.cos(dLon);
+                double By = Math.cos(lat2) * Math.sin(dLon);
+                double lat3 = Math.atan2(Math.sin(lat1) + Math.sin(lat2), Math.sqrt((Math.cos(lat1) + Bx) * (Math.cos(lat1) + Bx) + By * By));
+                double lon3 = lon1 + Math.atan2(By, Math.cos(lat1) + Bx);
+
+                LatLng dopplerLatLng = new LatLng(Math.toDegrees(lat3), Math.toDegrees(lon3));
+                CameraPosition cameraPosition = new CameraPosition.Builder().target(dopplerLatLng).zoom(7).build();
+
+                mMap.moveCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
+
+            }
+        }
     }
 
     private class LoadLatestContours extends AsyncTask<Void, Void, ArrayList<LatestContour>>{

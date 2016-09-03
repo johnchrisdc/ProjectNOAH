@@ -9,6 +9,8 @@ public class Constants {
 
     public static final String LATEST_CONTOUR = "http://noah.dost.gov.ph/api/latest_contour";
 
+    public static final String DOPPLER = "http://noah.dost.gov.ph/api/doppler";
+
 
     public static final String LAYER_WEATHER_CONTOUR = "weather_contour";
     public static final String ACTION_WEATHER_CONTOUR_1 = "1_hour_rainfall_contour";
@@ -19,5 +21,17 @@ public class Constants {
     public static final String ACTION_WEATHER_CONTOUR_TEMPERATURE = "temperature_contour";
     public static final String ACTION_WEATHER_CONTOUR_PRESSURE = "pressure_contour";
     public static final String ACTION_WEATHER_CONTOUR_HUMIDITY = "humidity_contour";
+
+    public static final String LAYER_WEATHER_DOPPLER = "weather_doppler";
+    public static final String ACTION_WEATHER_DOPPLER_BAGUIO = "Baguio Station";
+    public static final String ACTION_WEATHER_DOPPLER_SUBIC = "Subic Station";
+    public static final String ACTION_WEATHER_DOPPLER_TAGAYTAY = "Tagaytay Station";
+    public static final String ACTION_WEATHER_DOPPLER_CEBU = "Cebu Station";
+    public static final String ACTION_WEATHER_DOPPLER_HINATAUAN = "Hinatuan Station";
+    public static final String ACTION_WEATHER_DOPPLER_TAMPAKAN = "Tampakan Station";
+    public static final String ACTION_WEATHER_DOPPLER_APARRI = "Aparri Station";
+    public static final String ACTION_WEATHER_DOPPLER_VIRAC = "Virac Station";
+    public static final String ACTION_WEATHER_DOPPLER_BALER = "Baler Station";
+
 
 }

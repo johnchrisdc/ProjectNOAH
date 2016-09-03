@@ -42,7 +42,7 @@ public class DrawerAdapter  extends RecyclerView.Adapter<DrawerAdapter.ViewHolde
     }
 
     public interface OnDrawerItemClickedListener{
-        void onDrawerItemClicked(String action);
+        void onDrawerItemClicked(String category, String action);
     }
 
     public static class ViewHolder extends RecyclerView.ViewHolder {
@@ -69,10 +69,13 @@ public class DrawerAdapter  extends RecyclerView.Adapter<DrawerAdapter.ViewHolde
         LinearLayout subItems;
         LinearLayout item;
 
-        TextView rowContour;
-        LinearLayout subItemsContour;
+        TextView rowContour, rowDoppler;
+        LinearLayout subItemsContour, subItemsDoppler;
         TextView itemContour_1, itemContour_3, itemContour_6, itemContour_12, itemContour_24
                 , itemContour_temperature, itemContour_pressure, itemContour_humidity;
+
+        TextView itemDopplerBaguio, itemDopplerSubic, itemDopplerTagaytay, itemDopplerCebu, itemDopplerHinatuan
+                , itemDopplerTampakan, itemDopplerAparri, itemDopplerVirac, itemDopplerBaler;
 
         public WeatherViewHolder(View itemView) {
             super(itemView);
@@ -84,6 +87,9 @@ public class DrawerAdapter  extends RecyclerView.Adapter<DrawerAdapter.ViewHolde
 
             rowContour = (TextView) itemView.findViewById(R.id.rowContour);
             subItemsContour = (LinearLayout) itemView.findViewById(R.id.sub_items_contour);
+
+            rowDoppler = (TextView) itemView.findViewById(R.id.rowDoppler);
+            subItemsDoppler = (LinearLayout) itemView.findViewById(R.id.sub_items_doppler);
 
             itemContour_1 = (TextView) itemView.findViewById(R.id.rowContour1);
             itemContour_3 = (TextView) itemView.findViewById(R.id.rowContour3);
@@ -102,6 +108,17 @@ public class DrawerAdapter  extends RecyclerView.Adapter<DrawerAdapter.ViewHolde
             itemContour_temperature.setTag(Constants.ACTION_WEATHER_CONTOUR_TEMPERATURE);
             itemContour_pressure.setTag(Constants.ACTION_WEATHER_CONTOUR_PRESSURE);
             itemContour_humidity.setTag(Constants.ACTION_WEATHER_CONTOUR_HUMIDITY);
+
+            itemDopplerAparri = (TextView) itemView.findViewById(R.id.rowDopplerAparri);
+            itemDopplerBaguio = (TextView) itemView.findViewById(R.id.rowDopplerBaguio);
+            itemDopplerBaler = (TextView) itemView.findViewById(R.id.rowDopplerBaler);
+            itemDopplerCebu = (TextView) itemView.findViewById(R.id.rowDopplerCebu);
+            itemDopplerHinatuan = (TextView) itemView.findViewById(R.id.rowDopplerHinatuan);
+            itemDopplerSubic = (TextView) itemView.findViewById(R.id.rowDopplerSubic);
+            itemDopplerTagaytay = (TextView) itemView.findViewById(R.id.rowDopplerTagaytay);
+            itemDopplerTampakan = (TextView) itemView.findViewById(R.id.rowDopplerTampakan);
+            itemDopplerVirac = (TextView) itemView.findViewById(R.id.rowDopplerVirac);
+
         }
     }
 
@@ -185,6 +202,7 @@ public class DrawerAdapter  extends RecyclerView.Adapter<DrawerAdapter.ViewHolde
 
                     if(weatherViewHolder.subItems.getVisibility() == View.GONE){
                         weatherViewHolder.subItemsContour.setVisibility(View.GONE);
+                        weatherViewHolder.subItemsDoppler.setVisibility(View.GONE);
                     }
 
                 }
@@ -194,7 +212,6 @@ public class DrawerAdapter  extends RecyclerView.Adapter<DrawerAdapter.ViewHolde
                 @Override
                 public void onClick(View view) {
                     weatherViewHolder.subItemsContour.setVisibility(weatherViewHolder.subItemsContour.getVisibility() == View.VISIBLE ? View.GONE : View.VISIBLE);
-                    isContourLayerActive(weatherViewHolder.subItemsContour);
                 }
             });
 
@@ -202,7 +219,7 @@ public class DrawerAdapter  extends RecyclerView.Adapter<DrawerAdapter.ViewHolde
             weatherViewHolder.itemContour_1.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    onDrawerItemClickedListener.onDrawerItemClicked(Constants.ACTION_WEATHER_CONTOUR_1);
+                    onDrawerItemClickedListener.onDrawerItemClicked(Constants.LAYER_WEATHER_CONTOUR, Constants.ACTION_WEATHER_CONTOUR_1);
                     isContourLayerActive(weatherViewHolder.subItemsContour);
                 }
             });
@@ -210,7 +227,7 @@ public class DrawerAdapter  extends RecyclerView.Adapter<DrawerAdapter.ViewHolde
             weatherViewHolder.itemContour_3.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    onDrawerItemClickedListener.onDrawerItemClicked(Constants.ACTION_WEATHER_CONTOUR_3);
+                    onDrawerItemClickedListener.onDrawerItemClicked(Constants.LAYER_WEATHER_CONTOUR, Constants.ACTION_WEATHER_CONTOUR_3);
                     isContourLayerActive(weatherViewHolder.subItemsContour);
                 }
             });
@@ -218,7 +235,7 @@ public class DrawerAdapter  extends RecyclerView.Adapter<DrawerAdapter.ViewHolde
             weatherViewHolder.itemContour_6.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    onDrawerItemClickedListener.onDrawerItemClicked(Constants.ACTION_WEATHER_CONTOUR_6);
+                    onDrawerItemClickedListener.onDrawerItemClicked(Constants.LAYER_WEATHER_CONTOUR, Constants.ACTION_WEATHER_CONTOUR_6);
                     isContourLayerActive(weatherViewHolder.subItemsContour);
                 }
             });
@@ -226,7 +243,7 @@ public class DrawerAdapter  extends RecyclerView.Adapter<DrawerAdapter.ViewHolde
             weatherViewHolder.itemContour_12.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    onDrawerItemClickedListener.onDrawerItemClicked(Constants.ACTION_WEATHER_CONTOUR_12);
+                    onDrawerItemClickedListener.onDrawerItemClicked(Constants.LAYER_WEATHER_CONTOUR, Constants.ACTION_WEATHER_CONTOUR_12);
                     isContourLayerActive(weatherViewHolder.subItemsContour);
                 }
             });
@@ -234,7 +251,7 @@ public class DrawerAdapter  extends RecyclerView.Adapter<DrawerAdapter.ViewHolde
             weatherViewHolder.itemContour_24.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    onDrawerItemClickedListener.onDrawerItemClicked(Constants.ACTION_WEATHER_CONTOUR_24);
+                    onDrawerItemClickedListener.onDrawerItemClicked(Constants.LAYER_WEATHER_CONTOUR, Constants.ACTION_WEATHER_CONTOUR_24);
                     isContourLayerActive(weatherViewHolder.subItemsContour);
                 }
             });
@@ -242,7 +259,7 @@ public class DrawerAdapter  extends RecyclerView.Adapter<DrawerAdapter.ViewHolde
             weatherViewHolder.itemContour_temperature.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    onDrawerItemClickedListener.onDrawerItemClicked(Constants.ACTION_WEATHER_CONTOUR_TEMPERATURE);
+                    onDrawerItemClickedListener.onDrawerItemClicked(Constants.LAYER_WEATHER_CONTOUR, Constants.ACTION_WEATHER_CONTOUR_TEMPERATURE);
                     isContourLayerActive(weatherViewHolder.subItemsContour);
                 }
             });
@@ -250,7 +267,7 @@ public class DrawerAdapter  extends RecyclerView.Adapter<DrawerAdapter.ViewHolde
             weatherViewHolder.itemContour_pressure.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    onDrawerItemClickedListener.onDrawerItemClicked(Constants.ACTION_WEATHER_CONTOUR_PRESSURE);
+                    onDrawerItemClickedListener.onDrawerItemClicked(Constants.LAYER_WEATHER_CONTOUR, Constants.ACTION_WEATHER_CONTOUR_PRESSURE);
                     isContourLayerActive(weatherViewHolder.subItemsContour);
                 }
             });
@@ -258,8 +275,80 @@ public class DrawerAdapter  extends RecyclerView.Adapter<DrawerAdapter.ViewHolde
             weatherViewHolder.itemContour_humidity.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    onDrawerItemClickedListener.onDrawerItemClicked(Constants.ACTION_WEATHER_CONTOUR_HUMIDITY);
+                    onDrawerItemClickedListener.onDrawerItemClicked(Constants.LAYER_WEATHER_CONTOUR, Constants.ACTION_WEATHER_CONTOUR_HUMIDITY);
                     isContourLayerActive(weatherViewHolder.subItemsContour);
+                }
+            });
+
+
+            weatherViewHolder.rowDoppler.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    weatherViewHolder.subItemsDoppler.setVisibility(weatherViewHolder.subItemsDoppler.getVisibility() == View.VISIBLE ? View.GONE : View.VISIBLE);
+                }
+            });
+
+            //Doppler onClicks
+            weatherViewHolder.itemDopplerAparri.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    onDrawerItemClickedListener.onDrawerItemClicked(Constants.LAYER_WEATHER_DOPPLER, Constants.ACTION_WEATHER_DOPPLER_APARRI);
+                }
+            });
+
+            weatherViewHolder.itemDopplerVirac.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    onDrawerItemClickedListener.onDrawerItemClicked(Constants.LAYER_WEATHER_DOPPLER, Constants.ACTION_WEATHER_DOPPLER_VIRAC);
+                }
+            });
+
+            weatherViewHolder.itemDopplerTampakan.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    onDrawerItemClickedListener.onDrawerItemClicked(Constants.LAYER_WEATHER_DOPPLER, Constants.ACTION_WEATHER_DOPPLER_TAMPAKAN);
+                }
+            });
+
+            weatherViewHolder.itemDopplerTagaytay.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    onDrawerItemClickedListener.onDrawerItemClicked(Constants.LAYER_WEATHER_DOPPLER, Constants.ACTION_WEATHER_DOPPLER_TAGAYTAY);
+                }
+            });
+
+            weatherViewHolder.itemDopplerSubic.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    onDrawerItemClickedListener.onDrawerItemClicked(Constants.LAYER_WEATHER_DOPPLER, Constants.ACTION_WEATHER_DOPPLER_SUBIC);
+                }
+            });
+
+            weatherViewHolder.itemDopplerBaguio.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    onDrawerItemClickedListener.onDrawerItemClicked(Constants.LAYER_WEATHER_DOPPLER, Constants.ACTION_WEATHER_DOPPLER_BAGUIO);
+                }
+            });
+
+            weatherViewHolder.itemDopplerBaler.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    onDrawerItemClickedListener.onDrawerItemClicked(Constants.LAYER_WEATHER_DOPPLER, Constants.ACTION_WEATHER_DOPPLER_BALER);
+                }
+            });
+
+            weatherViewHolder.itemDopplerCebu.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    onDrawerItemClickedListener.onDrawerItemClicked(Constants.LAYER_WEATHER_DOPPLER, Constants.ACTION_WEATHER_DOPPLER_CEBU);
+                }
+            });
+
+            weatherViewHolder.itemDopplerHinatuan.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    onDrawerItemClickedListener.onDrawerItemClicked(Constants.LAYER_WEATHER_DOPPLER, Constants.ACTION_WEATHER_DOPPLER_HINATAUAN);
                 }
             });
 
