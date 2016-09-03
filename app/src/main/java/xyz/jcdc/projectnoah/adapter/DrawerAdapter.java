@@ -119,6 +119,16 @@ public class DrawerAdapter  extends RecyclerView.Adapter<DrawerAdapter.ViewHolde
             itemDopplerTampakan = (TextView) itemView.findViewById(R.id.rowDopplerTampakan);
             itemDopplerVirac = (TextView) itemView.findViewById(R.id.rowDopplerVirac);
 
+            itemDopplerAparri.setTag(Constants.ACTION_WEATHER_DOPPLER_APARRI);
+            itemDopplerBaguio.setTag(Constants.ACTION_WEATHER_DOPPLER_BAGUIO);
+            itemDopplerBaler.setTag(Constants.ACTION_WEATHER_DOPPLER_BALER);
+            itemDopplerCebu.setTag(Constants.ACTION_WEATHER_DOPPLER_CEBU);
+            itemDopplerHinatuan.setTag(Constants.ACTION_WEATHER_DOPPLER_HINATAUAN);
+            itemDopplerSubic.setTag(Constants.ACTION_WEATHER_DOPPLER_SUBIC);
+            itemDopplerTagaytay.setTag(Constants.ACTION_WEATHER_DOPPLER_TAGAYTAY);
+            itemDopplerTampakan.setTag(Constants.ACTION_WEATHER_DOPPLER_TAMPAKAN);
+            itemDopplerVirac.setTag(Constants.ACTION_WEATHER_DOPPLER_VIRAC);
+
         }
     }
 
@@ -293,6 +303,7 @@ public class DrawerAdapter  extends RecyclerView.Adapter<DrawerAdapter.ViewHolde
                 @Override
                 public void onClick(View view) {
                     onDrawerItemClickedListener.onDrawerItemClicked(Constants.LAYER_WEATHER_DOPPLER, Constants.ACTION_WEATHER_DOPPLER_APARRI);
+                    isDopplerLayerActive(weatherViewHolder.subItemsDoppler);
                 }
             });
 
@@ -300,6 +311,7 @@ public class DrawerAdapter  extends RecyclerView.Adapter<DrawerAdapter.ViewHolde
                 @Override
                 public void onClick(View view) {
                     onDrawerItemClickedListener.onDrawerItemClicked(Constants.LAYER_WEATHER_DOPPLER, Constants.ACTION_WEATHER_DOPPLER_VIRAC);
+                    isDopplerLayerActive(weatherViewHolder.subItemsDoppler);
                 }
             });
 
@@ -307,6 +319,7 @@ public class DrawerAdapter  extends RecyclerView.Adapter<DrawerAdapter.ViewHolde
                 @Override
                 public void onClick(View view) {
                     onDrawerItemClickedListener.onDrawerItemClicked(Constants.LAYER_WEATHER_DOPPLER, Constants.ACTION_WEATHER_DOPPLER_TAMPAKAN);
+                    isDopplerLayerActive(weatherViewHolder.subItemsDoppler);
                 }
             });
 
@@ -314,6 +327,7 @@ public class DrawerAdapter  extends RecyclerView.Adapter<DrawerAdapter.ViewHolde
                 @Override
                 public void onClick(View view) {
                     onDrawerItemClickedListener.onDrawerItemClicked(Constants.LAYER_WEATHER_DOPPLER, Constants.ACTION_WEATHER_DOPPLER_TAGAYTAY);
+                    isDopplerLayerActive(weatherViewHolder.subItemsDoppler);
                 }
             });
 
@@ -321,6 +335,7 @@ public class DrawerAdapter  extends RecyclerView.Adapter<DrawerAdapter.ViewHolde
                 @Override
                 public void onClick(View view) {
                     onDrawerItemClickedListener.onDrawerItemClicked(Constants.LAYER_WEATHER_DOPPLER, Constants.ACTION_WEATHER_DOPPLER_SUBIC);
+                    isDopplerLayerActive(weatherViewHolder.subItemsDoppler);
                 }
             });
 
@@ -328,6 +343,7 @@ public class DrawerAdapter  extends RecyclerView.Adapter<DrawerAdapter.ViewHolde
                 @Override
                 public void onClick(View view) {
                     onDrawerItemClickedListener.onDrawerItemClicked(Constants.LAYER_WEATHER_DOPPLER, Constants.ACTION_WEATHER_DOPPLER_BAGUIO);
+                    isDopplerLayerActive(weatherViewHolder.subItemsDoppler);
                 }
             });
 
@@ -335,6 +351,7 @@ public class DrawerAdapter  extends RecyclerView.Adapter<DrawerAdapter.ViewHolde
                 @Override
                 public void onClick(View view) {
                     onDrawerItemClickedListener.onDrawerItemClicked(Constants.LAYER_WEATHER_DOPPLER, Constants.ACTION_WEATHER_DOPPLER_BALER);
+                    isDopplerLayerActive(weatherViewHolder.subItemsDoppler);
                 }
             });
 
@@ -342,6 +359,7 @@ public class DrawerAdapter  extends RecyclerView.Adapter<DrawerAdapter.ViewHolde
                 @Override
                 public void onClick(View view) {
                     onDrawerItemClickedListener.onDrawerItemClicked(Constants.LAYER_WEATHER_DOPPLER, Constants.ACTION_WEATHER_DOPPLER_CEBU);
+                    isDopplerLayerActive(weatherViewHolder.subItemsDoppler);
                 }
             });
 
@@ -349,6 +367,7 @@ public class DrawerAdapter  extends RecyclerView.Adapter<DrawerAdapter.ViewHolde
                 @Override
                 public void onClick(View view) {
                     onDrawerItemClickedListener.onDrawerItemClicked(Constants.LAYER_WEATHER_DOPPLER, Constants.ACTION_WEATHER_DOPPLER_HINATAUAN);
+                    isDopplerLayerActive(weatherViewHolder.subItemsDoppler);
                 }
             });
 
@@ -362,7 +381,19 @@ public class DrawerAdapter  extends RecyclerView.Adapter<DrawerAdapter.ViewHolde
     }
 
     private void isContourLayerActive(LinearLayout parent){
+        for (int x=0; x<parent.getChildCount(); x++){
+            TextView v = (TextView) parent.getChildAt(x);
+            v.setTextColor(Color.BLACK);
+            for (Layer layer : layers){
+                Log.d("DrawerAdapter", layer.getAction());
+                if(layer.getAction().equals(v.getTag())){
+                    v.setTextColor(Color.RED);
+                }
+            }
+        }
+    }
 
+    private void isDopplerLayerActive(LinearLayout parent){
         for (int x=0; x<parent.getChildCount(); x++){
             TextView v = (TextView) parent.getChildAt(x);
             v.setTextColor(Color.BLACK);
