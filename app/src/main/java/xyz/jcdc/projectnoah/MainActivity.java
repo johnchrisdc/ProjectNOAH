@@ -61,8 +61,10 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
 
     private ArrayList<LatestContour> latestContours;
 
-    GroundOverlayOptions contourOverlay;
-    GroundOverlay contourGroundOverlay;
+    private GroundOverlayOptions contourOverlay;
+    private GroundOverlay contourGroundOverlay;
+
+    private String current_contour_action;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -124,10 +126,6 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
 
         loadLocations = new LoadLocations();
         loadLocations.execute();
-
-        loadLatestContours = new LoadLatestContours();
-        loadLatestContours.execute();
-
     }
 
     @Override
@@ -163,35 +161,15 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     }
 
     private void applyContour(String action){
-        if(loadContour != null){
-            loadContour.cancel(true);
+        current_contour_action = action;
+
+        if(loadLatestContours != null){
+            loadLatestContours.cancel(true);
         }
 
-        loadContour = new LoadContour();
+        loadLatestContours = new LoadLatestContours();
+        loadLatestContours.execute();
 
-        LatestContour latestContour = null;
-
-        if(action.equals(Constants.ACTION_WEATHER_CONTOUR_1)){
-            latestContour = MainActivity.this.latestContours.get(0);
-        }
-
-        if(action.equals(Constants.ACTION_WEATHER_CONTOUR_3)){
-            latestContour = MainActivity.this.latestContours.get(1);
-        }
-
-        if(action.equals(Constants.ACTION_WEATHER_CONTOUR_6)){
-            latestContour = MainActivity.this.latestContours.get(2);
-        }
-
-        if(action.equals(Constants.ACTION_WEATHER_CONTOUR_12)){
-            latestContour = MainActivity.this.latestContours.get(3);
-        }
-
-        Log.d("MainActivity", "DEBUG CONTOUR URL: " + latestContour.getUrl());
-
-        if(latestContour != null){
-            loadContour.execute(latestContour);
-        }
 
     }
 
@@ -213,6 +191,32 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
             if (latestContours != null){
                 Log.d("MainActivity", "Latest Contours loaded");
                 MainActivity.this.latestContours = latestContours;
+
+                LatestContour latestContour = null;
+
+                if(current_contour_action.equals(Constants.ACTION_WEATHER_CONTOUR_1)){
+                    latestContour = MainActivity.this.latestContours.get(0);
+                }
+
+                if(current_contour_action.equals(Constants.ACTION_WEATHER_CONTOUR_3)){
+                    latestContour = MainActivity.this.latestContours.get(1);
+                }
+
+                if(current_contour_action.equals(Constants.ACTION_WEATHER_CONTOUR_6)){
+                    latestContour = MainActivity.this.latestContours.get(2);
+                }
+
+                if(current_contour_action.equals(Constants.ACTION_WEATHER_CONTOUR_12)){
+                    latestContour = MainActivity.this.latestContours.get(3);
+                }
+
+                Log.d("MainActivity", "DEBUG CONTOUR URL: " + latestContour.getUrl());
+
+                if(latestContour != null){
+                    new LoadContour().execute(latestContour);
+                }else {
+                    Log.d("MainActivity", "latestContour is null");
+                }
             }
         }
     }
