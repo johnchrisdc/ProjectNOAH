@@ -41,6 +41,7 @@ import xyz.jcdc.projectnoah.contour.LatestContour;
 import xyz.jcdc.projectnoah.doppler.Doppler;
 import xyz.jcdc.projectnoah.fragment.WelcomeDialogFragment;
 import xyz.jcdc.projectnoah.helper.Helper;
+import xyz.jcdc.projectnoah.helper.MapHelper;
 import xyz.jcdc.projectnoah.objects.DrawerItem;
 import xyz.jcdc.projectnoah.objects.Layer;
 
@@ -68,8 +69,11 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     private ArrayList<LatestContour> latestContours;
     private ArrayList<Doppler> dopplers;
 
-    private GroundOverlayOptions contourOverlay, dopplerBaguioOverlay;
-    private GroundOverlay contourGroundOverlay, dopplerBaguioGroundOverlay;
+    private GroundOverlayOptions contourOverlay;
+    private GroundOverlay contourGroundOverlay;
+
+    private GroundOverlayOptions dopplerBaguioOverlay, dopplerSubicOverlay, dopplerTagaytayOverlay, dopplerCebuOverlay, dopplerHinatuanOverlay, dopplerTampakanOverlay, dopplerAparriOverlay, dopplerViracOverlay, dopplerBalerOverlay;
+    private GroundOverlay dopplerBaguioGroundOverlay, dopplerSubicGroundOverlay, dopplerTagaytayGroundOverlay, dopplerCebuGroundOverlay, dopplerHinatuanGroundOverlay, dopplerTampakanGroundOverlay, dopplerAparriGroundOverlay, dopplerViracGroundOverlay, dopplerBalerGroundOverlay;
 
     private String current_contour_action, current_doppler_action;
 
@@ -314,9 +318,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
-            if(dopplerBaguioGroundOverlay != null){
-                dopplerBaguioGroundOverlay.remove();
-            }
+
         }
 
         @Override
@@ -354,36 +356,99 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                         new LatLng(doppler.getExtent()[1], doppler.getExtent()[0]),       // South west corner
                         new LatLng(doppler.getExtent()[3], doppler.getExtent()[2]));      // North east corner
 
-                Log.d("MainActivity", "Applying countour");
-                dopplerBaguioOverlay = new GroundOverlayOptions()
-                        .image(BitmapDescriptorFactory.fromBitmap(bitmap))
-                        .transparency(.5f)
-                        .positionFromBounds(newarkBounds);
+                switch (current_doppler_action){
+                    case Constants.ACTION_WEATHER_DOPPLER_APARRI:
+                        Log.d("MainActivity", "Applying countour");
+                        dopplerAparriOverlay = new GroundOverlayOptions()
+                                .image(BitmapDescriptorFactory.fromBitmap(bitmap))
+                                .transparency(.5f)
+                                .positionFromBounds(newarkBounds);
 
-                dopplerBaguioGroundOverlay = mMap.addGroundOverlay(dopplerBaguioOverlay);
+                        dopplerAparriGroundOverlay = mMap.addGroundOverlay(dopplerAparriOverlay);
+                        break;
 
-                double lat1 = doppler.getExtent()[1];
-                double lat2 = doppler.getExtent()[3];
+                    case Constants.ACTION_WEATHER_DOPPLER_BAGUIO:
+                        Log.d("MainActivity", "Applying countour");
+                        dopplerBaguioOverlay = new GroundOverlayOptions()
+                                .image(BitmapDescriptorFactory.fromBitmap(bitmap))
+                                .transparency(.5f)
+                                .positionFromBounds(newarkBounds);
 
-                double lon1 = doppler.getExtent()[0];
-                double lon2 = doppler.getExtent()[2];
+                        dopplerBaguioGroundOverlay = mMap.addGroundOverlay(dopplerBaguioOverlay);
+                        break;
 
-                double dLon = Math.toRadians(lon2 - lon1);
+                    case Constants.ACTION_WEATHER_DOPPLER_BALER:
+                        Log.d("MainActivity", "Applying countour");
+                        dopplerBalerOverlay = new GroundOverlayOptions()
+                                .image(BitmapDescriptorFactory.fromBitmap(bitmap))
+                                .transparency(.5f)
+                                .positionFromBounds(newarkBounds);
 
-                //convert to radians
-                lat1 = Math.toRadians(lat1);
-                lat2 = Math.toRadians(lat2);
-                lon1 = Math.toRadians(lon1);
+                        dopplerBalerGroundOverlay = mMap.addGroundOverlay(dopplerBalerOverlay);
+                        break;
 
-                double Bx = Math.cos(lat2) * Math.cos(dLon);
-                double By = Math.cos(lat2) * Math.sin(dLon);
-                double lat3 = Math.atan2(Math.sin(lat1) + Math.sin(lat2), Math.sqrt((Math.cos(lat1) + Bx) * (Math.cos(lat1) + Bx) + By * By));
-                double lon3 = lon1 + Math.atan2(By, Math.cos(lat1) + Bx);
+                    case Constants.ACTION_WEATHER_DOPPLER_CEBU:
+                        Log.d("MainActivity", "Applying countour");
+                        dopplerCebuOverlay = new GroundOverlayOptions()
+                                .image(BitmapDescriptorFactory.fromBitmap(bitmap))
+                                .transparency(.5f)
+                                .positionFromBounds(newarkBounds);
 
-                LatLng dopplerLatLng = new LatLng(Math.toDegrees(lat3), Math.toDegrees(lon3));
-                CameraPosition cameraPosition = new CameraPosition.Builder().target(dopplerLatLng).zoom(7).build();
+                        dopplerCebuGroundOverlay = mMap.addGroundOverlay(dopplerCebuOverlay);
+                        break;
 
-                mMap.moveCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
+                    case Constants.ACTION_WEATHER_DOPPLER_HINATAUAN:
+                        Log.d("MainActivity", "Applying countour");
+                        dopplerHinatuanOverlay = new GroundOverlayOptions()
+                                .image(BitmapDescriptorFactory.fromBitmap(bitmap))
+                                .transparency(.5f)
+                                .positionFromBounds(newarkBounds);
+
+                        dopplerHinatuanGroundOverlay = mMap.addGroundOverlay(dopplerHinatuanOverlay);
+                        break;
+
+                    case Constants.ACTION_WEATHER_DOPPLER_SUBIC:
+                        Log.d("MainActivity", "Applying countour");
+                        dopplerSubicOverlay = new GroundOverlayOptions()
+                                .image(BitmapDescriptorFactory.fromBitmap(bitmap))
+                                .transparency(.5f)
+                                .positionFromBounds(newarkBounds);
+
+                        dopplerSubicGroundOverlay = mMap.addGroundOverlay(dopplerSubicOverlay);
+                        break;
+
+                    case Constants.ACTION_WEATHER_DOPPLER_TAGAYTAY:
+                        Log.d("MainActivity", "Applying countour");
+                        dopplerTagaytayOverlay = new GroundOverlayOptions()
+                                .image(BitmapDescriptorFactory.fromBitmap(bitmap))
+                                .transparency(.5f)
+                                .positionFromBounds(newarkBounds);
+
+                        dopplerTagaytayGroundOverlay = mMap.addGroundOverlay(dopplerTagaytayOverlay);
+                        break;
+
+                    case Constants.ACTION_WEATHER_DOPPLER_TAMPAKAN:
+                        Log.d("MainActivity", "Applying countour");
+                        dopplerTampakanOverlay = new GroundOverlayOptions()
+                                .image(BitmapDescriptorFactory.fromBitmap(bitmap))
+                                .transparency(.5f)
+                                .positionFromBounds(newarkBounds);
+
+                        dopplerTampakanGroundOverlay = mMap.addGroundOverlay(dopplerTampakanOverlay);
+                        break;
+
+                    case Constants.ACTION_WEATHER_DOPPLER_VIRAC:
+                        Log.d("MainActivity", "Applying countour");
+                        dopplerViracOverlay = new GroundOverlayOptions()
+                                .image(BitmapDescriptorFactory.fromBitmap(bitmap))
+                                .transparency(.5f)
+                                .positionFromBounds(newarkBounds);
+
+                        dopplerViracGroundOverlay = mMap.addGroundOverlay(dopplerViracOverlay);
+                        break;
+                }
+
+                MapHelper.zoomToMap(doppler, mMap);
 
             }
         }
