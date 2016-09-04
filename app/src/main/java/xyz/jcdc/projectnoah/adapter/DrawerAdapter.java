@@ -461,6 +461,7 @@ public class DrawerAdapter  extends RecyclerView.Adapter<DrawerAdapter.ViewHolde
                 @Override
                 public void onClick(View view) {
                     onDrawerItemClickedListener.onDrawerItemClicked(Constants.LAYER_WEATHER_FORECAST, Constants.ACTION_WEATHER_FORECAST_4);
+                    isWeatherForecastActive(weatherViewHolder.subItemsWeatherOutlook);
                 }
             });
 
@@ -499,6 +500,19 @@ public class DrawerAdapter  extends RecyclerView.Adapter<DrawerAdapter.ViewHolde
     }
 
     private void isSatelliteLayerActive(LinearLayout parent){
+        for (int x=0; x<parent.getChildCount(); x++){
+            TextView v = (TextView) parent.getChildAt(x);
+            v.setTextColor(Color.BLACK);
+            for (Layer layer : layers){
+                Log.d("DrawerAdapter", layer.getAction());
+                if(layer.getAction().equals(v.getTag())){
+                    v.setTextColor(Color.RED);
+                }
+            }
+        }
+    }
+
+    private void isWeatherForecastActive(LinearLayout parent){
         for (int x=0; x<parent.getChildCount(); x++){
             TextView v = (TextView) parent.getChildAt(x);
             v.setTextColor(Color.BLACK);
