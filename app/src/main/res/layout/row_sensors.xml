@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:paddingTop="8dp"
+    android:paddingBottom="8dp"
+    android:layout_height="wrap_content"
+    android:background="#ffffff"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:gravity="center_vertical"
+        android:id="@+id/item"
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/rowIcon"
+            android:paddingLeft="16dp"
+            android:src="@mipmap/ic_launcher"/>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingLeft="12dp"
+            android:paddingTop="4dp"
+            android:textAppearance="@style/TextAppearanceDrawer"
+            android:text="Medium Text"
+            android:id="@+id/rowText" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:visibility="gone"
+        android:layout_marginLeft="55dp"
+        android:id="@+id/sub_items"
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingLeft="12dp"
+            android:paddingTop="10dp"
+            android:textAppearance="@style/TextAppearanceDrawer"
+            android:text="Rain Gauges"
+            android:id="@+id/rowRainGauges" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingLeft="12dp"
+            android:paddingTop="10dp"
+            android:textAppearance="@style/TextAppearanceDrawer"
+            android:text="Stream Gauges"
+            android:id="@+id/rowStreamGauges" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingLeft="12dp"
+            android:paddingTop="10dp"
+            android:textAppearance="@style/TextAppearanceDrawer"
+            android:text="Rain and Stream Gauges"
+            android:id="@+id/rowRainAndStreamGauges" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingLeft="12dp"
+            android:paddingTop="10dp"
+            android:textAppearance="@style/TextAppearanceDrawer"
+            android:text="Weather Stations"
+            android:id="@+id/rowWeatherStations" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:paddingLeft="12dp"
+            android:paddingTop="10dp"
+            android:textAppearance="@style/TextAppearanceDrawer"
+            android:text="Tide Levels"
+            android:id="@+id/rowTideLevels" />
+
+    </LinearLayout>
+
+</LinearLayout>

@@ -17,6 +17,8 @@ public class Constants {
 
     public static final String WEATHER_STATIONS = "http://noah.dost.gov.ph/api/stations";
 
+    public static final String WEATHER_STATIONS_MARKER = "http://noah.dost.gov.ph/static/img/map/";
+
     public static final String LAYER_WEATHER_CONTOUR = "weather_contour";
     public static final String ACTION_WEATHER_CONTOUR_1 = "1_hour_rainfall_contour";
     public static final String ACTION_WEATHER_CONTOUR_3 = "3_hour_rainfall_contour";
@@ -47,5 +49,13 @@ public class Constants {
 
     public static final String LAYER_WEATHER_FORECAST = "weather_forecast";
     public static final String ACTION_WEATHER_FORECAST_4 = "4-Hour Rain Forecast";
+
+    public static final String LAYER_SENSORS = "sensors";
+    public static final String ACTION_SENSORS_WEATHER = "Automated Weather Stations";
+    public static final String ACTION_SENSORS_RAIN_GAUGE = "Automated Rain Gauges";
+    public static final String ACTION_SENSORS_STREAM_GAUGE = "Automated Stream Gauges";
+    public static final String ACTION_SENSORS_RAIN_AND_STREAM_GAUGE = "Automated Rain and Stream Gauges";
+    public static final String ACTION_SENSORS_TIDE_LEVELS = "Tide Level Stations";
+
 
 }

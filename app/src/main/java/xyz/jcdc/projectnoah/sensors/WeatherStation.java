@@ -11,6 +11,7 @@ import org.json.JSONObject;
 
 import java.io.IOException;
 import java.io.Serializable;
+import java.lang.reflect.Array;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 
@@ -64,7 +65,7 @@ public class WeatherStation implements Serializable {
         this.stations = stations;
     }
 
-    public static WeatherStation getWeatherStation() throws IOException {
+    public static ArrayList<WeatherStation> getWeatherStation() throws IOException {
         OkHttpClient client = new OkHttpClient();
         Request request = new Request.Builder()
                 .url(Constants.WEATHER_STATIONS)
@@ -75,14 +76,18 @@ public class WeatherStation implements Serializable {
         if(response != null){
             try{
                 JSONArray stationsArray = new JSONArray(response.body().string());
+                ArrayList<WeatherStation> weatherStations = new ArrayList<>();
 
                 for (int x=0; x<stationsArray.length(); x++){
                     JSONObject jsonObject = stationsArray.optJSONObject(x);
 
                     Gson gson = new Gson();
                     WeatherStation weatherStation = gson.fromJson(jsonObject.toString(), WeatherStation.class);
-                    Log.d("WeatherStation", weatherStation.getVerbose_name());
+
+                    weatherStations.add(weatherStation);
                 }
+
+                return weatherStations;
 
             }catch (JSONException e){
                 e.printStackTrace();

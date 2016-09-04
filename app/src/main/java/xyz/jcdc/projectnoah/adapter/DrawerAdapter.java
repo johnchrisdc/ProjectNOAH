@@ -32,6 +32,8 @@ public class DrawerAdapter  extends RecyclerView.Adapter<DrawerAdapter.ViewHolde
     private final int VIEW_ITEM = 0;
     private final int VIEW_HEADER = 1;
     private final int VIEW_WEATHER = 2;
+    private final int VIEW_SENSORS = 3;
+
 
     private SparseBooleanArray expandState = new SparseBooleanArray();
 
@@ -158,6 +160,37 @@ public class DrawerAdapter  extends RecyclerView.Adapter<DrawerAdapter.ViewHolde
         }
     }
 
+    public class SensorsViewHolder extends ViewHolder {
+        TextView textView;
+        ImageView imageView;
+
+        LinearLayout subItems;
+        LinearLayout item;
+
+        TextView rowRainGauges, rowStreamGauges, rowRainAndStreamGauges, rowWeatherStations, rowTideLevels;
+
+        public SensorsViewHolder(View v) {
+            super(v);
+            textView = (TextView) itemView.findViewById(R.id.rowText); // Creating TextView object with the id of textView from item_row.xml
+            imageView = (ImageView) itemView.findViewById(R.id.rowIcon);
+
+            subItems = (LinearLayout) itemView.findViewById(R.id.sub_items);
+            item = (LinearLayout) itemView.findViewById(R.id.item);
+
+            rowRainGauges = (TextView) itemView.findViewById(R.id.rowRainGauges);
+            rowStreamGauges = (TextView) itemView.findViewById(R.id.rowStreamGauges);
+            rowRainAndStreamGauges = (TextView) itemView.findViewById(R.id.rowRainAndStreamGauges);
+            rowTideLevels = (TextView) itemView.findViewById(R.id.rowTideLevels);
+            rowWeatherStations = (TextView) itemView.findViewById(R.id.rowWeatherStations);
+
+            rowRainGauges.setTag(Constants.ACTION_SENSORS_RAIN_GAUGE);
+            rowStreamGauges.setTag(Constants.ACTION_SENSORS_STREAM_GAUGE);
+            rowRainAndStreamGauges.setTag(Constants.ACTION_SENSORS_RAIN_AND_STREAM_GAUGE);
+            rowTideLevels.setTag(Constants.ACTION_SENSORS_TIDE_LEVELS);
+            rowWeatherStations.setTag(Constants.ACTION_SENSORS_WEATHER);
+        }
+    }
+
     public class HeaderViewHolder extends ViewHolder{
         TextView textView;
 
@@ -184,6 +217,9 @@ public class DrawerAdapter  extends RecyclerView.Adapter<DrawerAdapter.ViewHolde
         if(position == 1)
             return VIEW_WEATHER;
 
+        if(position == 2)
+            return VIEW_SENSORS;
+
         return VIEW_ITEM;
     }
 
@@ -208,6 +244,10 @@ public class DrawerAdapter  extends RecyclerView.Adapter<DrawerAdapter.ViewHolde
             case VIEW_WEATHER:
                 v = LayoutInflater.from(parent.getContext()).inflate(R.layout.row_weather,parent,false); //Inflating the layout
                 return new WeatherViewHolder(v);
+
+            case VIEW_SENSORS:
+                v = LayoutInflater.from(parent.getContext()).inflate(R.layout.row_sensors,parent,false); //Inflating the layout
+                return new SensorsViewHolder(v);
 
         }
 
@@ -462,6 +502,62 @@ public class DrawerAdapter  extends RecyclerView.Adapter<DrawerAdapter.ViewHolde
                 public void onClick(View view) {
                     onDrawerItemClickedListener.onDrawerItemClicked(Constants.LAYER_WEATHER_FORECAST, Constants.ACTION_WEATHER_FORECAST_4);
                     isWeatherForecastActive(weatherViewHolder.subItemsWeatherOutlook);
+                }
+            });
+
+        }else if(holder.getItemViewType() == VIEW_SENSORS) {
+            final SensorsViewHolder sensorsViewHolder = (SensorsViewHolder) holder;
+            DrawerItem drawerItem = drawerItems.get(position - 1);
+
+            sensorsViewHolder.textView.setText(drawerItem.getTitle());
+            sensorsViewHolder.imageView.setImageResource(drawerItem.getIcon());
+
+            sensorsViewHolder.item.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    sensorsViewHolder.subItems.setVisibility(sensorsViewHolder.subItems.getVisibility() == View.VISIBLE ? View.GONE : View.VISIBLE);
+
+                }
+            });
+
+            //Sensor onClicks
+            sensorsViewHolder.rowRainGauges.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    onDrawerItemClickedListener.onDrawerItemClicked(Constants.LAYER_SENSORS, Constants.ACTION_SENSORS_RAIN_GAUGE);
+
+                }
+            });
+
+            sensorsViewHolder.rowWeatherStations.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    onDrawerItemClickedListener.onDrawerItemClicked(Constants.LAYER_SENSORS, Constants.ACTION_SENSORS_WEATHER);
+
+                }
+            });
+
+            sensorsViewHolder.rowTideLevels.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    onDrawerItemClickedListener.onDrawerItemClicked(Constants.LAYER_SENSORS, Constants.ACTION_SENSORS_TIDE_LEVELS);
+
+                }
+            });
+
+            sensorsViewHolder.rowRainAndStreamGauges.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    onDrawerItemClickedListener.onDrawerItemClicked(Constants.LAYER_SENSORS, Constants.ACTION_SENSORS_RAIN_AND_STREAM_GAUGE);
+
+                }
+            });
+
+            sensorsViewHolder.rowStreamGauges.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    onDrawerItemClickedListener.onDrawerItemClicked(Constants.LAYER_SENSORS, Constants.ACTION_SENSORS_STREAM_GAUGE);
+
                 }
             });
 

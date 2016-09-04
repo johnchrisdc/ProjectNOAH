@@ -2,6 +2,7 @@ package xyz.jcdc.projectnoah;
 
 import android.content.Context;
 import android.graphics.Bitmap;
+import android.hardware.Sensor;
 import android.os.AsyncTask;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
@@ -54,6 +55,8 @@ import xyz.jcdc.projectnoah.mtsat.Satellite;
 import xyz.jcdc.projectnoah.objects.DrawerItem;
 import xyz.jcdc.projectnoah.objects.Layer;
 import xyz.jcdc.projectnoah.rain_forecast.RainForecast;
+import xyz.jcdc.projectnoah.sensors.Station;
+import xyz.jcdc.projectnoah.sensors.WeatherStation;
 
 public class MainActivity extends AppCompatActivity implements OnMapReadyCallback, DrawerAdapter.OnDrawerItemClickedListener,
         GoogleMap.OnMarkerClickListener{
@@ -95,13 +98,15 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     private GroundOverlayOptions satelliteOverlay;
     private GroundOverlay satelliteGroundOverlay;
 
-    private String current_contour_action, current_doppler_action, current_satellite_action, current_weather_forecast_action;
+    private String current_contour_action, current_doppler_action, current_satellite_action, current_weather_forecast_action, current_sensor_action;
 
     private ArrayList<Layer> layers;
 
     private Marker marker;
+    private Marker sensorRainGaugesMarker, sensorStreamGaugesMarker, sensorRainAndStreamGaugesMarker, sensorTideLevelsMarker, sensorWeatherStationsMarker;
 
     private HashMap<Marker, RainForecast> markerRainForecastHashMap;
+    private HashMap<Marker, Station> markerRainGaugesHashMap, markerStreamGaugesStationHashMap, markerRainAndStreamGaugesStationHashMap, markerTideLevelsHashMap, markerWeatherStationsHashMap;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -165,6 +170,13 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
 
         loadLocations = new LoadLocations();
         loadLocations.execute();
+
+        //Load Hashmaps
+        markerRainGaugesHashMap = new HashMap<>();
+        markerTideLevelsHashMap = new HashMap<>();
+        markerRainAndStreamGaugesStationHashMap = new HashMap<>();
+        markerWeatherStationsHashMap = new HashMap<>();
+        markerStreamGaugesStationHashMap= new HashMap<>();
     }
 
     @Override
@@ -180,7 +192,6 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
 
     @Override
     public boolean onMarkerClick(Marker marker) {
-        Toast.makeText(context,markerRainForecastHashMap.get(marker).getLocation(), Toast.LENGTH_SHORT).show();
         return false;
     }
 
@@ -338,8 +349,78 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
 
                 break;
 
+            case Constants.LAYER_SENSORS:
+
+                if (isSensorLayerExists(action)){
+                    for (int x = mAdapter.getLayers().size() - 1; x > -1; x--){
+                        if(mAdapter.getLayers().get(x).getCategory().equals(Constants.LAYER_SENSORS)){
+                            if(mAdapter.getLayers().get(x).getAction().equals(action)){
+                                removeSensorMarkers(action);
+
+                                mAdapter.getLayers().remove(x);
+                                Log.d("MainActivity", "Sensor removed: ");
+                            }
+                        }
+                    }
+                }else{
+                    Layer layer = new Layer();
+                    layer.setAction(action);
+                    layer.setCategory(category);
+
+                    mAdapter.getLayers().add(layer);
+                    current_sensor_action = action;
+
+                    new GetWeatherStation().execute();
+                }
+
+                break;
+
         }
 
+    }
+
+    private void removeSensorMarkers(String action){
+        switch (action){
+            case Constants.ACTION_SENSORS_RAIN_GAUGE:
+                for (Map.Entry<Marker, Station> station : markerRainGaugesHashMap.entrySet()){
+                    if (station.getKey() != null)
+                        station.getKey().remove();
+                }
+                break;
+
+            case Constants.ACTION_SENSORS_RAIN_AND_STREAM_GAUGE:
+                for (Map.Entry<Marker, Station> station : markerRainAndStreamGaugesStationHashMap.entrySet()){
+                    if (station.getKey() != null)
+                        station.getKey().remove();
+                }
+
+                break;
+
+            case Constants.ACTION_SENSORS_STREAM_GAUGE:
+                for (Map.Entry<Marker, Station> station : markerStreamGaugesStationHashMap.entrySet()){
+                    if (station.getKey() != null)
+                        station.getKey().remove();
+                }
+
+                break;
+
+            case Constants.ACTION_SENSORS_TIDE_LEVELS:
+                for (Map.Entry<Marker, Station> station : markerTideLevelsHashMap.entrySet()){
+                    if (station.getKey() != null)
+                        station.getKey().remove();
+                }
+
+                break;
+
+            case Constants.ACTION_SENSORS_WEATHER:
+                for (Map.Entry<Marker, Station> station : markerWeatherStationsHashMap.entrySet()){
+                    if (station.getKey() != null)
+                        station.getKey().remove();
+                }
+
+                break;
+
+        }
     }
 
     private void removeDopplerFromMap(String action){
@@ -389,6 +470,20 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                     dopplerViracGroundOverlay.remove();
                 break;
         }
+    }
+
+    private boolean isSensorLayerExists(String action){
+
+        for (Layer layer : layers){
+            if (layer.getCategory().equals(Constants.LAYER_SENSORS)){
+                if (layer.getAction().equals(action)){
+                    Log.d("MainActivity" , "Sensor Action exists");
+                    return true;
+                }
+            }
+        }
+
+        return false;
     }
 
     private boolean isSatelliteLayerExists(String action){
@@ -466,6 +561,125 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
 
         loadLatestContours = new LoadLatestContours();
         loadLatestContours.execute();
+    }
+
+    private class GetWeatherStation extends AsyncTask<Void, Void, ArrayList<WeatherStation>>{
+        @Override
+        protected ArrayList<WeatherStation> doInBackground(Void... voids) {
+            try {
+                return WeatherStation.getWeatherStation();
+            }catch (IOException e){
+
+            }
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(ArrayList<WeatherStation> weatherStations) {
+            super.onPostExecute(weatherStations);
+
+            if (weatherStations != null){
+                for (WeatherStation weatherStation : weatherStations){
+                    if (weatherStation.getVerbose_name().equals(current_sensor_action)){
+                        new LoadWeatherStationMarker().execute(weatherStation);
+                    }
+                }
+
+            }
+
+        }
+    }
+
+    private class LoadWeatherStationMarker extends AsyncTask<WeatherStation, Void, Bitmap>{
+        WeatherStation weatherStation;
+
+        @Override
+        protected Bitmap doInBackground(WeatherStation... weatherStations) {
+            weatherStation = weatherStations[0];
+
+            try{
+                return Glide.
+                        with(context).
+                        load(Constants.WEATHER_STATIONS_MARKER + weatherStation.getIcon()).
+                        asBitmap().
+                        skipMemoryCache(true).
+                        into(30, 30). // Width and height
+                        get();
+
+            }catch (ConcurrentModificationException e){
+
+            }catch (InterruptedException e){
+
+            }catch (ExecutionException e){
+
+            }
+
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Bitmap bitmap) {
+            super.onPostExecute(bitmap);
+
+            if (bitmap != null){ //May produce bugs
+                for (Station station : weatherStation.getStations()){
+
+                    switch (current_sensor_action){
+                        case Constants.ACTION_SENSORS_RAIN_GAUGE:
+                            sensorRainGaugesMarker = mMap.addMarker(new MarkerOptions()
+                                    .position(new LatLng(station.getLat(), station.getLng()))
+                                    .title(station.getVerbose_name())
+                                    .icon(BitmapDescriptorFactory.fromBitmap(bitmap)));
+
+                            markerRainGaugesHashMap.put(sensorRainGaugesMarker, station);
+
+                            break;
+
+                        case Constants.ACTION_SENSORS_RAIN_AND_STREAM_GAUGE:
+                            sensorRainAndStreamGaugesMarker = mMap.addMarker(new MarkerOptions()
+                                    .position(new LatLng(station.getLat(), station.getLng()))
+                                    .title(station.getVerbose_name())
+                                    .icon(BitmapDescriptorFactory.fromBitmap(bitmap)));
+
+                            markerRainAndStreamGaugesStationHashMap.put(sensorRainAndStreamGaugesMarker, station);
+
+                            break;
+
+                        case Constants.ACTION_SENSORS_STREAM_GAUGE:
+                            sensorStreamGaugesMarker = mMap.addMarker(new MarkerOptions()
+                                    .position(new LatLng(station.getLat(), station.getLng()))
+                                    .title(station.getVerbose_name())
+                                    .icon(BitmapDescriptorFactory.fromBitmap(bitmap)));
+
+                            markerStreamGaugesStationHashMap.put(sensorStreamGaugesMarker, station);
+
+                            break;
+
+                        case Constants.ACTION_SENSORS_TIDE_LEVELS:
+                            sensorTideLevelsMarker = mMap.addMarker(new MarkerOptions()
+                                    .position(new LatLng(station.getLat(), station.getLng()))
+                                    .title(station.getVerbose_name())
+                                    .icon(BitmapDescriptorFactory.fromBitmap(bitmap)));
+
+                            markerTideLevelsHashMap.put(sensorTideLevelsMarker, station);
+
+                            break;
+
+                        case Constants.ACTION_SENSORS_WEATHER:
+                            sensorWeatherStationsMarker = mMap.addMarker(new MarkerOptions()
+                                    .position(new LatLng(station.getLat(), station.getLng()))
+                                    .title(station.getVerbose_name())
+                                    .icon(BitmapDescriptorFactory.fromBitmap(bitmap)));
+
+                            markerWeatherStationsHashMap.put(sensorWeatherStationsMarker, station);
+
+                            break;
+
+                    }
+                }
+            }
+
+        }
     }
 
     private class LoadWeatherForecast extends AsyncTask<Void, Void, ArrayList<RainForecast>>{
