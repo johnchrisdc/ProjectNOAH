@@ -15,6 +15,8 @@ public class Constants {
 
     public static final String WEATHER_OUTLOOK_RAIN_FORECAST = "http://noah.dost.gov.ph/weather/rain_forecast";
 
+    public static final String WEATHER_STATIONS = "http://noah.dost.gov.ph/api/stations";
+
     public static final String LAYER_WEATHER_CONTOUR = "weather_contour";
     public static final String ACTION_WEATHER_CONTOUR_1 = "1_hour_rainfall_contour";
     public static final String ACTION_WEATHER_CONTOUR_3 = "3_hour_rainfall_contour";
