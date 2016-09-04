@@ -11,6 +11,8 @@ public class Constants {
 
     public static final String DOPPLER = "http://noah.dost.gov.ph/api/doppler";
 
+    public static final String SATELLITE = "http://noah.dost.gov.ph/api/mtsat";
+
 
     public static final String LAYER_WEATHER_CONTOUR = "weather_contour";
     public static final String ACTION_WEATHER_CONTOUR_1 = "1_hour_rainfall_contour";
@@ -33,5 +35,11 @@ public class Constants {
     public static final String ACTION_WEATHER_DOPPLER_VIRAC = "Virac Station";
     public static final String ACTION_WEATHER_DOPPLER_BALER = "Baler Station";
 
+    public static final String LAYER_WEATHER_SATELLITE = "weather_satellite";
+    public static final String ACTION_WEATHER_SATELLITE_HIMAWARI = "Satellite Image (Himawari)";
+    public static final String ACTION_WEATHER_SATELLITE_GSMAP_1 = "Accumulated GSMAP (1hr)";
+    public static final String ACTION_WEATHER_SATELLITE_GSMAP_3 = "Accumulated GSMAP (3hr)";
+    public static final String ACTION_WEATHER_SATELLITE_GSMAP_6 = "Accumulated GSMAP (6hr)";
+    public static final String ACTION_WEATHER_SATELLITE_GSMAP_12 = "Accumulated GSMAP (12hr)";
 
 }

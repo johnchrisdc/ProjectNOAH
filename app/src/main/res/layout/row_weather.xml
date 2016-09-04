@@ -251,6 +251,61 @@
             android:text="Satellite"
             android:id="@+id/rowSatellite" />
 
+        <LinearLayout
+            android:visibility="gone"
+            android:layout_marginLeft="25dp"
+            android:id="@+id/sub_items_satellite"
+            android:orientation="vertical"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingLeft="12dp"
+                android:paddingTop="10dp"
+                android:textAppearance="@style/TextAppearanceDrawer"
+                android:text="Satellite Image (Himawari)"
+                android:id="@+id/rowSatelliteHimawari" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingLeft="12dp"
+                android:paddingTop="10dp"
+                android:textAppearance="@style/TextAppearanceDrawer"
+                android:text="Accumulated GSMAP (1hr)"
+                android:id="@+id/rowSatelliteGSMAP1" />
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingLeft="12dp"
+                android:paddingTop="10dp"
+                android:textAppearance="@style/TextAppearanceDrawer"
+                android:text="Accumulated GSMAP (3hr)"
+                android:id="@+id/rowSatelliteGSMAP3" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingLeft="12dp"
+                android:paddingTop="10dp"
+                android:textAppearance="@style/TextAppearanceDrawer"
+                android:text="Accumulated GSMAP (6hr)"
+                android:id="@+id/rowSatelliteGSMAP6" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingLeft="12dp"
+                android:paddingTop="10dp"
+                android:textAppearance="@style/TextAppearanceDrawer"
+                android:text="Accumulated GSMAP (12hr)"
+                android:id="@+id/rowSatelliteGSMAP12" />
+
+
+        </LinearLayout>
+
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

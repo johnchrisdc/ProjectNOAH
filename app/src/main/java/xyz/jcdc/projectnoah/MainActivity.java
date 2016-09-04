@@ -16,6 +16,7 @@ import android.view.ViewGroup;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
@@ -42,6 +43,7 @@ import xyz.jcdc.projectnoah.doppler.Doppler;
 import xyz.jcdc.projectnoah.fragment.WelcomeDialogFragment;
 import xyz.jcdc.projectnoah.helper.Helper;
 import xyz.jcdc.projectnoah.helper.MapHelper;
+import xyz.jcdc.projectnoah.mtsat.Satellite;
 import xyz.jcdc.projectnoah.objects.DrawerItem;
 import xyz.jcdc.projectnoah.objects.Layer;
 
@@ -66,8 +68,11 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
 
     private LoadDoppler loadDoppler;
 
+    private LoadSatellite loadSatellite;
+
     private ArrayList<LatestContour> latestContours;
     private ArrayList<Doppler> dopplers;
+    private ArrayList<Satellite> satellites;
 
     private GroundOverlayOptions contourOverlay;
     private GroundOverlay contourGroundOverlay;
@@ -75,7 +80,10 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     private GroundOverlayOptions dopplerBaguioOverlay, dopplerSubicOverlay, dopplerTagaytayOverlay, dopplerCebuOverlay, dopplerHinatuanOverlay, dopplerTampakanOverlay, dopplerAparriOverlay, dopplerViracOverlay, dopplerBalerOverlay;
     private GroundOverlay dopplerBaguioGroundOverlay, dopplerSubicGroundOverlay, dopplerTagaytayGroundOverlay, dopplerCebuGroundOverlay, dopplerHinatuanGroundOverlay, dopplerTampakanGroundOverlay, dopplerAparriGroundOverlay, dopplerViracGroundOverlay, dopplerBalerGroundOverlay;
 
-    private String current_contour_action, current_doppler_action;
+    private GroundOverlayOptions satelliteOverlay;
+    private GroundOverlay satelliteGroundOverlay;
+
+    private String current_contour_action, current_doppler_action, current_satellite_action;
 
     private ArrayList<Layer> layers;
 
@@ -167,68 +175,112 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     public void onDrawerItemClicked(String category, String action) {
         drawer.closeDrawers();
 
-        if ( category.equals(Constants.LAYER_WEATHER_CONTOUR) ){
-            if(isContourLayerExists(action)){
-                if (contourGroundOverlay != null){
-                    contourGroundOverlay.remove();
-                }
+        switch (category){
+            case Constants.LAYER_WEATHER_CONTOUR:
 
-                //This layer does not support multiple layers, so remove it if it exists
-                int x=0;
-                for (Layer l : mAdapter.getLayers()){
-                    if(l.getCategory().equals(Constants.LAYER_WEATHER_CONTOUR)){
-                        Log.d("MainActivity", "DELETING");
-                        mAdapter.getLayers().remove(x);
+                if(isContourLayerExists(action)){
+                    if (contourGroundOverlay != null){
+                        contourGroundOverlay.remove();
                     }
-                    x++;
-                }
-            }else {
-                applyContour(action);
 
-                Layer layer = new Layer();
-                layer.setCategory(Constants.LAYER_WEATHER_CONTOUR);
-                layer.setAction(action);
-
-                //This layer does not support multiple layers, so remove it if it exists
-                for (int x = mAdapter.getLayers().size() - 1; x > -1; x--){
-                    if(mAdapter.getLayers().get(x).getCategory().equals(Constants.LAYER_WEATHER_CONTOUR)){
-                        mAdapter.getLayers().remove(x);
-                    }
-                }
-
-                mAdapter.getLayers().add(layer);
-            }
-
-            for (Layer l : mAdapter.getLayers()){
-                Log.d("MainActivity", l.getAction());
-            }
-        }else if (category.equals(Constants.LAYER_WEATHER_DOPPLER)){
-            Log.d("MainActivity", "Doppler clicked");
-            if (loadDoppler != null){
-                loadDoppler.cancel(true);
-            }
-
-            if (isDopplerLayerExists(action)){
-                for (int x = mAdapter.getLayers().size() - 1; x > -1; x--){
-                    if(mAdapter.getLayers().get(x).getCategory().equals(Constants.LAYER_WEATHER_DOPPLER)){
-                        if(mAdapter.getLayers().get(x).getAction().equals(action)){
-                            removeDopplerFromMap(action);
+                    //This layer does not support multiple layers, so remove it if it exists
+                    int x=0;
+                    for (Layer l : mAdapter.getLayers()){
+                        if(l.getCategory().equals(Constants.LAYER_WEATHER_CONTOUR)){
+                            Log.d("MainActivity", "DELETING");
                             mAdapter.getLayers().remove(x);
-                            Log.d("MainActivity", "Doppler removed: ");
+                        }
+                        x++;
+                    }
+                }else {
+                    applyContour(action);
+
+                    Layer layer = new Layer();
+                    layer.setCategory(Constants.LAYER_WEATHER_CONTOUR);
+                    layer.setAction(action);
+
+                    //This layer does not support multiple layers, so remove it if it exists
+                    for (int x = mAdapter.getLayers().size() - 1; x > -1; x--){
+                        if(mAdapter.getLayers().get(x).getCategory().equals(Constants.LAYER_WEATHER_CONTOUR)){
+                            mAdapter.getLayers().remove(x);
                         }
                     }
+
+                    mAdapter.getLayers().add(layer);
                 }
-            }else {
-                Layer layer = new Layer();
-                layer.setAction(action);
-                layer.setCategory(category);
 
-                mAdapter.getLayers().add(layer);
-                current_doppler_action = action;
+                for (Layer l : mAdapter.getLayers()){
+                    Log.d("MainActivity", l.getAction());
+                }
 
-                loadDoppler = new LoadDoppler();
-                loadDoppler.execute();
-            }
+                break;
+
+            case Constants.LAYER_WEATHER_DOPPLER:
+
+                Log.d("MainActivity", "Doppler clicked");
+                if (loadDoppler != null){
+                    loadDoppler.cancel(true);
+                }
+
+                if (isDopplerLayerExists(action)){
+                    for (int x = mAdapter.getLayers().size() - 1; x > -1; x--){
+                        if(mAdapter.getLayers().get(x).getCategory().equals(Constants.LAYER_WEATHER_DOPPLER)){
+                            if(mAdapter.getLayers().get(x).getAction().equals(action)){
+                                removeDopplerFromMap(action);
+                                mAdapter.getLayers().remove(x);
+                                Log.d("MainActivity", "Doppler removed: ");
+                            }
+                        }
+                    }
+                }else {
+                    Layer layer = new Layer();
+                    layer.setAction(action);
+                    layer.setCategory(category);
+
+                    mAdapter.getLayers().add(layer);
+                    current_doppler_action = action;
+
+                    loadDoppler = new LoadDoppler();
+                    loadDoppler.execute();
+                }
+
+                break;
+
+            case Constants.LAYER_WEATHER_SATELLITE:
+
+                if(isSatelliteLayerExists(action)){
+                    if (satelliteGroundOverlay != null){
+                        satelliteGroundOverlay.remove();
+                    }
+
+                    //This layer does not support multiple layers, so remove it if it exists
+                    int x=0;
+                    for (Layer l : mAdapter.getLayers()){
+                        if(l.getCategory().equals(Constants.LAYER_WEATHER_SATELLITE)){
+                            Log.d("MainActivity", "DELETING");
+                            mAdapter.getLayers().remove(x);
+                        }
+                        x++;
+                    }
+                }else {
+                    applySatellite(action);
+
+                    Layer layer = new Layer();
+                    layer.setCategory(Constants.LAYER_WEATHER_SATELLITE);
+                    layer.setAction(action);
+
+                    //This layer does not support multiple layers, so remove it if it exists
+                    for (int x = mAdapter.getLayers().size() - 1; x > -1; x--){
+                        if(mAdapter.getLayers().get(x).getCategory().equals(Constants.LAYER_WEATHER_SATELLITE)){
+                            mAdapter.getLayers().remove(x);
+                        }
+                    }
+
+                    mAdapter.getLayers().add(layer);
+                }
+
+                break;
+
         }
 
     }
@@ -282,6 +334,20 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         }
     }
 
+    private boolean isSatelliteLayerExists(String action){
+
+        for (Layer layer : layers){
+            if (layer.getCategory().equals(Constants.LAYER_WEATHER_SATELLITE)){
+                if (layer.getAction().equals(action)){
+                    Log.d("MainActivity" , "Satellite Action exists");
+                    return true;
+                }
+            }
+        }
+
+        return false;
+    }
+
     private boolean isDopplerLayerExists(String action){
 
         for (Layer layer : layers){
@@ -309,6 +375,17 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         return false;
     }
 
+    private void applySatellite(String action){
+        current_satellite_action = action;
+
+        if(loadSatellite != null){
+            loadSatellite.cancel(true);
+        }
+
+        loadSatellite = new LoadSatellite();
+        loadSatellite.execute();
+    }
+
     private void applyContour(String action){
         current_contour_action = action;
 
@@ -320,7 +397,103 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         loadLatestContours.execute();
     }
 
+    private class LoadSatellite extends AsyncTask<Void, Void, ArrayList<Satellite>>{
+        @Override
+        protected ArrayList<Satellite> doInBackground(Void... voids) {
+            try {
+                return Satellite.getSatellites();
+            }catch (IOException e){
 
+            }
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(ArrayList<Satellite> satellites) {
+            super.onPostExecute(satellites);
+
+            if (satellites != null){
+                Satellite current_satellite = null;
+                MainActivity.this.satellites = satellites;
+                Log.d("MainActivity", "Satellites: " + satellites.toString());
+
+                for (Satellite satellite : satellites){
+                    if(satellite.getVerbose_name().equals(current_satellite_action)){
+                        current_satellite = satellite;
+                    }
+                }
+
+                if(current_satellite != null){
+                    new LoadSatelliteContour().execute(current_satellite);
+                }else{
+                    Log.d("MainActivity", "Satellite is null");
+                }
+
+            }
+
+        }
+    }
+
+    private class LoadSatelliteContour extends AsyncTask<Satellite, Void, Bitmap>{
+        Satellite satellite;
+
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+
+            if (satelliteGroundOverlay != null){
+                satelliteGroundOverlay.remove();
+            }
+
+        }
+
+        @Override
+        protected Bitmap doInBackground(Satellite... satellites) {
+            satellite = satellites[0];
+
+            String contour_url = satellite.getUrl();
+            int width = satellite.getSize()[0];
+            int height = satellite.getSize()[1];
+
+            Log.d("Satellite","URL: " +  contour_url);
+
+            try {
+                return Glide.
+                        with(context).
+                        load(contour_url).
+                        asBitmap().
+                        skipMemoryCache(true).
+                        into(width, height). // Width and height
+                        get();
+            }catch (InterruptedException e){
+
+            }catch (ExecutionException e){
+
+            }
+            Log.d("MainActivity", "Error Satellite");
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Bitmap bitmap) {
+            super.onPostExecute(bitmap);
+
+            if (bitmap != null){
+                LatLngBounds newarkBounds = new LatLngBounds(
+                        new LatLng(satellite.getExtent()[1], satellite.getExtent()[0]),       // South west corner
+                        new LatLng(satellite.getExtent()[3], satellite.getExtent()[2]));      // North east corner
+
+                Log.d("MainActivity", "Applying satellite");
+                satelliteOverlay = new GroundOverlayOptions()
+                        .image(BitmapDescriptorFactory.fromBitmap(bitmap))
+                        .transparency(.5f)
+                        .positionFromBounds(newarkBounds);
+
+                satelliteGroundOverlay = mMap.addGroundOverlay(satelliteOverlay);
+            }
+
+        }
+    }
 
     private class LoadDoppler extends AsyncTask<Void, Void, ArrayList<Doppler>>{
         @Override
@@ -383,6 +556,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                         with(context).
                         load(contour_url).
                         asBitmap().
+                        skipMemoryCache(true).
                         into(width, height). // Width and height
                         get();
             }catch (InterruptedException e){
@@ -591,6 +765,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                         with(context).
                         load(contour_url).
                         asBitmap().
+                        skipMemoryCache(true).
                         into(width, height). // Width and height
                         get();
             }catch (InterruptedException e){

@@ -69,13 +69,16 @@ public class DrawerAdapter  extends RecyclerView.Adapter<DrawerAdapter.ViewHolde
         LinearLayout subItems;
         LinearLayout item;
 
-        TextView rowContour, rowDoppler;
-        LinearLayout subItemsContour, subItemsDoppler;
+        TextView rowContour, rowDoppler, rowSatellite;
+        LinearLayout subItemsContour, subItemsDoppler, subItemsSatellite;
+
         TextView itemContour_1, itemContour_3, itemContour_6, itemContour_12, itemContour_24
                 , itemContour_temperature, itemContour_pressure, itemContour_humidity;
 
         TextView itemDopplerBaguio, itemDopplerSubic, itemDopplerTagaytay, itemDopplerCebu, itemDopplerHinatuan
                 , itemDopplerTampakan, itemDopplerAparri, itemDopplerVirac, itemDopplerBaler;
+
+        TextView itemSatelitteHimawari, itemSatelitteGSMAP1, itemSatelitteGSMAP3, itemSatelitteGSMAP6, itemSatelitteGSMAP12;
 
         public WeatherViewHolder(View itemView) {
             super(itemView);
@@ -90,6 +93,9 @@ public class DrawerAdapter  extends RecyclerView.Adapter<DrawerAdapter.ViewHolde
 
             rowDoppler = (TextView) itemView.findViewById(R.id.rowDoppler);
             subItemsDoppler = (LinearLayout) itemView.findViewById(R.id.sub_items_doppler);
+
+            rowSatellite = (TextView) itemView.findViewById(R.id.rowSatellite);
+            subItemsSatellite = (LinearLayout) itemView.findViewById(R.id.sub_items_satellite);
 
             itemContour_1 = (TextView) itemView.findViewById(R.id.rowContour1);
             itemContour_3 = (TextView) itemView.findViewById(R.id.rowContour3);
@@ -129,6 +135,17 @@ public class DrawerAdapter  extends RecyclerView.Adapter<DrawerAdapter.ViewHolde
             itemDopplerTampakan.setTag(Constants.ACTION_WEATHER_DOPPLER_TAMPAKAN);
             itemDopplerVirac.setTag(Constants.ACTION_WEATHER_DOPPLER_VIRAC);
 
+            itemSatelitteHimawari = (TextView) itemView.findViewById(R.id.rowSatelliteHimawari);
+            itemSatelitteGSMAP1 = (TextView) itemView.findViewById(R.id.rowSatelliteGSMAP1);
+            itemSatelitteGSMAP3 = (TextView) itemView.findViewById(R.id.rowSatelliteGSMAP3);
+            itemSatelitteGSMAP6 = (TextView) itemView.findViewById(R.id.rowSatelliteGSMAP6);
+            itemSatelitteGSMAP12 = (TextView) itemView.findViewById(R.id.rowSatelliteGSMAP12);
+
+            itemSatelitteHimawari.setTag(Constants.ACTION_WEATHER_SATELLITE_HIMAWARI);
+            itemSatelitteGSMAP1.setTag(Constants.ACTION_WEATHER_SATELLITE_GSMAP_1);
+            itemSatelitteGSMAP3.setTag(Constants.ACTION_WEATHER_SATELLITE_GSMAP_3);
+            itemSatelitteGSMAP6.setTag(Constants.ACTION_WEATHER_SATELLITE_GSMAP_6);
+            itemSatelitteGSMAP12.setTag(Constants.ACTION_WEATHER_SATELLITE_GSMAP_12);
         }
     }
 
@@ -213,6 +230,7 @@ public class DrawerAdapter  extends RecyclerView.Adapter<DrawerAdapter.ViewHolde
                     if(weatherViewHolder.subItems.getVisibility() == View.GONE){
                         weatherViewHolder.subItemsContour.setVisibility(View.GONE);
                         weatherViewHolder.subItemsDoppler.setVisibility(View.GONE);
+                        weatherViewHolder.subItemsSatellite.setVisibility(View.GONE);
                     }
 
                 }
@@ -371,6 +389,54 @@ public class DrawerAdapter  extends RecyclerView.Adapter<DrawerAdapter.ViewHolde
                 }
             });
 
+            weatherViewHolder.rowSatellite.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    weatherViewHolder.subItemsSatellite.setVisibility(weatherViewHolder.subItemsSatellite.getVisibility() == View.VISIBLE ? View.GONE : View.VISIBLE);
+                }
+            });
+
+            //SatelliteOnClick
+
+            weatherViewHolder.itemSatelitteHimawari.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    onDrawerItemClickedListener.onDrawerItemClicked(Constants.LAYER_WEATHER_SATELLITE, Constants.ACTION_WEATHER_SATELLITE_HIMAWARI);
+                    isSatelliteLayerActive(weatherViewHolder.subItemsSatellite);
+                }
+            });
+
+            weatherViewHolder.itemSatelitteGSMAP1.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    onDrawerItemClickedListener.onDrawerItemClicked(Constants.LAYER_WEATHER_SATELLITE, Constants.ACTION_WEATHER_SATELLITE_GSMAP_1);
+                    isSatelliteLayerActive(weatherViewHolder.subItemsSatellite);
+                }
+            });
+
+            weatherViewHolder.itemSatelitteGSMAP3.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    onDrawerItemClickedListener.onDrawerItemClicked(Constants.LAYER_WEATHER_SATELLITE, Constants.ACTION_WEATHER_SATELLITE_GSMAP_3);
+                    isSatelliteLayerActive(weatherViewHolder.subItemsSatellite);
+                }
+            });
+
+            weatherViewHolder.itemSatelitteGSMAP6.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    onDrawerItemClickedListener.onDrawerItemClicked(Constants.LAYER_WEATHER_SATELLITE, Constants.ACTION_WEATHER_SATELLITE_GSMAP_6);
+                    isSatelliteLayerActive(weatherViewHolder.subItemsSatellite);
+                }
+            });
+
+            weatherViewHolder.itemSatelitteGSMAP12.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    onDrawerItemClickedListener.onDrawerItemClicked(Constants.LAYER_WEATHER_SATELLITE, Constants.ACTION_WEATHER_SATELLITE_GSMAP_12);
+                    isSatelliteLayerActive(weatherViewHolder.subItemsSatellite);
+                }
+            });
 
         }else if(holder.getItemViewType() == VIEW_HEADER){
             final HeaderViewHolder addProfileViewHolder = (HeaderViewHolder) holder;
@@ -394,6 +460,19 @@ public class DrawerAdapter  extends RecyclerView.Adapter<DrawerAdapter.ViewHolde
     }
 
     private void isDopplerLayerActive(LinearLayout parent){
+        for (int x=0; x<parent.getChildCount(); x++){
+            TextView v = (TextView) parent.getChildAt(x);
+            v.setTextColor(Color.BLACK);
+            for (Layer layer : layers){
+                Log.d("DrawerAdapter", layer.getAction());
+                if(layer.getAction().equals(v.getTag())){
+                    v.setTextColor(Color.RED);
+                }
+            }
+        }
+    }
+
+    private void isSatelliteLayerActive(LinearLayout parent){
         for (int x=0; x<parent.getChildCount(); x++){
             TextView v = (TextView) parent.getChildAt(x);
             v.setTextColor(Color.BLACK);
