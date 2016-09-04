@@ -43,4 +43,7 @@ public class Constants {
     public static final String ACTION_WEATHER_SATELLITE_GSMAP_6 = "Accumulated GSMAP (6hr)";
     public static final String ACTION_WEATHER_SATELLITE_GSMAP_12 = "Accumulated GSMAP (12hr)";
 
+    public static final String LAYER_WEATHER_FORECAST = "weather_forecast";
+    public static final String ACTION_WEATHER_FORECAST_4 = "4-Hour Rain Forecast";
+
 }

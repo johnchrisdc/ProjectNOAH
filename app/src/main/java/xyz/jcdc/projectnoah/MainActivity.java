@@ -40,6 +40,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.ConcurrentModificationException;
 import java.util.HashMap;
+import java.util.Map;
 import java.util.concurrent.ExecutionException;
 
 import xyz.jcdc.projectnoah.adapter.DrawerAdapter;
@@ -78,6 +79,8 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
 
     private LoadSatellite loadSatellite;
 
+    private LoadWeatherForecast loadWeatherForecast;
+
     private ArrayList<LatestContour> latestContours;
     private ArrayList<Doppler> dopplers;
     private ArrayList<Satellite> satellites;
@@ -92,7 +95,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     private GroundOverlayOptions satelliteOverlay;
     private GroundOverlay satelliteGroundOverlay;
 
-    private String current_contour_action, current_doppler_action, current_satellite_action;
+    private String current_contour_action, current_doppler_action, current_satellite_action, current_weather_forecast_action;
 
     private ArrayList<Layer> layers;
 
@@ -173,8 +176,6 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         CameraPosition cameraPosition = new CameraPosition.Builder().target(PHILIPPINES).zoom(5).build();
 
         mMap.moveCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
-
-        new LoadWeatherForecast().execute();
     }
 
     @Override
@@ -302,6 +303,41 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
 
                 break;
 
+            case Constants.LAYER_WEATHER_FORECAST:
+                if(isWeatherForecastLayerExists(action)){
+                    for (int x = mAdapter.getLayers().size() - 1; x > -1; x--){
+                        if(mAdapter.getLayers().get(x).getCategory().equals(Constants.LAYER_WEATHER_FORECAST)){
+                            if(mAdapter.getLayers().get(x).getAction().equals(action)){
+                                removeDopplerFromMap(action);
+                                mAdapter.getLayers().remove(x);
+                                Log.d("MainActivity", "Weather Forecast removed: ");
+
+                                //Remove all Markers
+
+
+
+                                for (Map.Entry<Marker, RainForecast> marker : markerRainForecastHashMap.entrySet()){
+                                    if (marker.getKey() != null)
+                                        marker.getKey().remove();
+                                }
+
+                            }
+                        }
+                    }
+                }else{
+                    Layer layer = new Layer();
+                    layer.setAction(action);
+                    layer.setCategory(category);
+
+                    mAdapter.getLayers().add(layer);
+                    current_weather_forecast_action = action;
+
+                    loadWeatherForecast = new LoadWeatherForecast();
+                    loadWeatherForecast.execute();
+                }
+
+                break;
+
         }
 
     }
@@ -361,6 +397,20 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
             if (layer.getCategory().equals(Constants.LAYER_WEATHER_SATELLITE)){
                 if (layer.getAction().equals(action)){
                     Log.d("MainActivity" , "Satellite Action exists");
+                    return true;
+                }
+            }
+        }
+
+        return false;
+    }
+
+    private boolean isWeatherForecastLayerExists(String action){
+
+        for (Layer layer : layers){
+            if (layer.getCategory().equals(Constants.LAYER_WEATHER_FORECAST)){
+                if (layer.getAction().equals(action)){
+                    Log.d("MainActivity" , "WEather Forecast Action exists");
                     return true;
                 }
             }

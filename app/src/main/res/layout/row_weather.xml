@@ -315,6 +315,25 @@
             android:text="Weather Outlook"
             android:id="@+id/rowWeatherOutlook" />
 
+        <LinearLayout
+            android:visibility="gone"
+            android:layout_marginLeft="25dp"
+            android:id="@+id/sub_items_weather_outlook"
+            android:orientation="vertical"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingLeft="12dp"
+                android:paddingTop="10dp"
+                android:textAppearance="@style/TextAppearanceDrawer"
+                android:text="4-Hour Rain Forecast"
+                android:id="@+id/rowWeatherRainForecast_4" />
+
+        </LinearLayout>
+
     </LinearLayout>
 
 </LinearLayout>

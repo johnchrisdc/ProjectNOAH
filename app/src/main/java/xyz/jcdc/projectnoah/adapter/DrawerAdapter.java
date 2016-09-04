@@ -69,8 +69,8 @@ public class DrawerAdapter  extends RecyclerView.Adapter<DrawerAdapter.ViewHolde
         LinearLayout subItems;
         LinearLayout item;
 
-        TextView rowContour, rowDoppler, rowSatellite;
-        LinearLayout subItemsContour, subItemsDoppler, subItemsSatellite;
+        TextView rowContour, rowDoppler, rowSatellite, rowWeatherOutlook;
+        LinearLayout subItemsContour, subItemsDoppler, subItemsSatellite, subItemsWeatherOutlook;
 
         TextView itemContour_1, itemContour_3, itemContour_6, itemContour_12, itemContour_24
                 , itemContour_temperature, itemContour_pressure, itemContour_humidity;
@@ -79,6 +79,8 @@ public class DrawerAdapter  extends RecyclerView.Adapter<DrawerAdapter.ViewHolde
                 , itemDopplerTampakan, itemDopplerAparri, itemDopplerVirac, itemDopplerBaler;
 
         TextView itemSatelitteHimawari, itemSatelitteGSMAP1, itemSatelitteGSMAP3, itemSatelitteGSMAP6, itemSatelitteGSMAP12;
+
+        TextView itemWeatherForecast_4;
 
         public WeatherViewHolder(View itemView) {
             super(itemView);
@@ -96,6 +98,9 @@ public class DrawerAdapter  extends RecyclerView.Adapter<DrawerAdapter.ViewHolde
 
             rowSatellite = (TextView) itemView.findViewById(R.id.rowSatellite);
             subItemsSatellite = (LinearLayout) itemView.findViewById(R.id.sub_items_satellite);
+
+            rowWeatherOutlook = (TextView) itemView.findViewById(R.id.rowWeatherOutlook);
+            subItemsWeatherOutlook = (LinearLayout) itemView.findViewById(R.id.sub_items_weather_outlook);
 
             itemContour_1 = (TextView) itemView.findViewById(R.id.rowContour1);
             itemContour_3 = (TextView) itemView.findViewById(R.id.rowContour3);
@@ -146,6 +151,10 @@ public class DrawerAdapter  extends RecyclerView.Adapter<DrawerAdapter.ViewHolde
             itemSatelitteGSMAP3.setTag(Constants.ACTION_WEATHER_SATELLITE_GSMAP_3);
             itemSatelitteGSMAP6.setTag(Constants.ACTION_WEATHER_SATELLITE_GSMAP_6);
             itemSatelitteGSMAP12.setTag(Constants.ACTION_WEATHER_SATELLITE_GSMAP_12);
+
+            itemWeatherForecast_4 = (TextView) itemView.findViewById(R.id.rowWeatherRainForecast_4);
+
+            itemWeatherForecast_4.setTag(Constants.ACTION_WEATHER_FORECAST_4);
         }
     }
 
@@ -231,6 +240,7 @@ public class DrawerAdapter  extends RecyclerView.Adapter<DrawerAdapter.ViewHolde
                         weatherViewHolder.subItemsContour.setVisibility(View.GONE);
                         weatherViewHolder.subItemsDoppler.setVisibility(View.GONE);
                         weatherViewHolder.subItemsSatellite.setVisibility(View.GONE);
+                        weatherViewHolder.subItemsWeatherOutlook.setVisibility(View.GONE);
                     }
 
                 }
@@ -435,6 +445,22 @@ public class DrawerAdapter  extends RecyclerView.Adapter<DrawerAdapter.ViewHolde
                 public void onClick(View view) {
                     onDrawerItemClickedListener.onDrawerItemClicked(Constants.LAYER_WEATHER_SATELLITE, Constants.ACTION_WEATHER_SATELLITE_GSMAP_12);
                     isSatelliteLayerActive(weatherViewHolder.subItemsSatellite);
+                }
+            });
+
+
+            weatherViewHolder.rowWeatherOutlook.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    weatherViewHolder.subItemsWeatherOutlook.setVisibility(weatherViewHolder.subItemsWeatherOutlook.getVisibility() == View.VISIBLE ? View.GONE : View.VISIBLE);
+                }
+            });
+
+            //Weather Forecast onClick
+            weatherViewHolder.itemWeatherForecast_4.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    onDrawerItemClickedListener.onDrawerItemClicked(Constants.LAYER_WEATHER_FORECAST, Constants.ACTION_WEATHER_FORECAST_4);
                 }
             });
 
