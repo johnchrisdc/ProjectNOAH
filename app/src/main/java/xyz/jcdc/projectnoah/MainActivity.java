@@ -17,6 +17,7 @@ import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
 import com.bumptech.glide.load.engine.DiskCacheStrategy;
+import com.google.android.gms.awareness.state.Weather;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
@@ -27,6 +28,8 @@ import com.google.android.gms.maps.model.GroundOverlay;
 import com.google.android.gms.maps.model.GroundOverlayOptions;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.LatLngBounds;
+import com.google.android.gms.maps.model.Marker;
+import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
@@ -34,6 +37,9 @@ import java.io.IOException;
 import java.lang.reflect.Type;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.ConcurrentModificationException;
+import java.util.HashMap;
 import java.util.concurrent.ExecutionException;
 
 import xyz.jcdc.projectnoah.adapter.DrawerAdapter;
@@ -46,8 +52,10 @@ import xyz.jcdc.projectnoah.helper.MapHelper;
 import xyz.jcdc.projectnoah.mtsat.Satellite;
 import xyz.jcdc.projectnoah.objects.DrawerItem;
 import xyz.jcdc.projectnoah.objects.Layer;
+import xyz.jcdc.projectnoah.rain_forecast.RainForecast;
 
-public class MainActivity extends AppCompatActivity implements OnMapReadyCallback, DrawerAdapter.OnDrawerItemClickedListener {
+public class MainActivity extends AppCompatActivity implements OnMapReadyCallback, DrawerAdapter.OnDrawerItemClickedListener,
+        GoogleMap.OnMarkerClickListener{
 
     private Context context;
 
@@ -73,6 +81,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     private ArrayList<LatestContour> latestContours;
     private ArrayList<Doppler> dopplers;
     private ArrayList<Satellite> satellites;
+    private ArrayList<RainForecast> rainForecasts;
 
     private GroundOverlayOptions contourOverlay;
     private GroundOverlay contourGroundOverlay;
@@ -86,6 +95,10 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     private String current_contour_action, current_doppler_action, current_satellite_action;
 
     private ArrayList<Layer> layers;
+
+    private Marker marker;
+
+    private HashMap<Marker, RainForecast> markerRainForecastHashMap;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -160,6 +173,14 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         CameraPosition cameraPosition = new CameraPosition.Builder().target(PHILIPPINES).zoom(5).build();
 
         mMap.moveCamera(CameraUpdateFactory.newCameraPosition(cameraPosition));
+
+        new LoadWeatherForecast().execute();
+    }
+
+    @Override
+    public boolean onMarkerClick(Marker marker) {
+        Toast.makeText(context,markerRainForecastHashMap.get(marker).getLocation(), Toast.LENGTH_SHORT).show();
+        return false;
     }
 
     private void showWelcomeDialogFragment(ArrayList<Location> locations){
@@ -395,6 +416,77 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
 
         loadLatestContours = new LoadLatestContours();
         loadLatestContours.execute();
+    }
+
+    private class LoadWeatherForecast extends AsyncTask<Void, Void, ArrayList<RainForecast>>{
+
+        @Override
+        protected ArrayList<RainForecast> doInBackground(Void... voids) {
+            try {
+                return RainForecast.getRainForecasts();
+            }catch (IOException e){
+
+            }
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(ArrayList<RainForecast> rainForecasts) {
+            super.onPostExecute(rainForecasts);
+
+            if(rainForecasts != null){
+                MainActivity.this.rainForecasts = rainForecasts;
+                markerRainForecastHashMap = new HashMap<>();
+
+                int x = 0;
+                for (RainForecast rainForecast : rainForecasts){
+                    new LoadMarker().execute(rainForecast);
+                }
+            }
+
+        }
+    }
+
+    private class LoadMarker extends AsyncTask<RainForecast, Void, Bitmap>{
+        RainForecast rainForecast;
+        @Override
+        protected Bitmap doInBackground(RainForecast... rainForecasts) {
+            rainForecast = rainForecasts[0];
+
+            try{
+                return Glide.
+                        with(context).
+                        load(rainForecast.getIcon()).
+                        asBitmap().
+                        skipMemoryCache(true).
+                        into(30, 30). // Width and height
+                        get();
+
+            }catch (ConcurrentModificationException e){
+
+            }catch (InterruptedException e){
+
+            }catch (ExecutionException e){
+
+            }
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Bitmap bitmap) {
+            super.onPostExecute(bitmap);
+            if(bitmap != null){
+                marker = mMap.addMarker(new MarkerOptions()
+                        .position(new LatLng(rainForecast.getLat(), rainForecast.getLng()))
+                        .title("Hello world")
+                        .icon(BitmapDescriptorFactory.fromBitmap(bitmap)));
+
+                markerRainForecastHashMap.put(marker, rainForecast);
+
+                mMap.setOnMarkerClickListener(MainActivity.this);
+            }
+
+        }
     }
 
     private class LoadSatellite extends AsyncTask<Void, Void, ArrayList<Satellite>>{
