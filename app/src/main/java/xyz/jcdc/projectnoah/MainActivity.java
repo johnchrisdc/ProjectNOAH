@@ -2,8 +2,11 @@ package xyz.jcdc.projectnoah;
 
 import android.content.Context;
 import android.graphics.Bitmap;
+import android.graphics.Color;
 import android.hardware.Sensor;
 import android.os.AsyncTask;
+import android.support.design.widget.CoordinatorLayout;
+import android.support.design.widget.Snackbar;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
@@ -14,6 +17,7 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.bumptech.glide.Glide;
@@ -108,6 +112,9 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
     private HashMap<Marker, RainForecast> markerRainForecastHashMap;
     private HashMap<Marker, Station> markerRainGaugesHashMap, markerStreamGaugesStationHashMap, markerRainAndStreamGaugesStationHashMap, markerTideLevelsHashMap, markerWeatherStationsHashMap;
 
+    private CoordinatorLayout coordinatorLayout;
+    private Snackbar snackbar, removedSnackbar;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -119,6 +126,8 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         setSupportActionBar(toolbar);
         getSupportActionBar().setTitle("");
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
+        coordinatorLayout = (CoordinatorLayout) findViewById(R.id.coordinatorLayout);
 
         mRecyclerView = (RecyclerView) findViewById(R.id.RecyclerView);
 
@@ -204,6 +213,38 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
         welcomeDialogFragment.show(getSupportFragmentManager(), "welcome_rotonda");
     }
 
+    private void showSnackBar(String message){
+        snackbar = Snackbar
+                .make(coordinatorLayout, "Loading " + message, Snackbar.LENGTH_LONG)
+                .setActionTextColor(context.getResources().getColor(R.color.header_background))
+                .setAction("HIDE", new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        snackbar.dismiss();
+                    }
+                });
+
+        snackbar.show();
+    }
+
+    private void showRemovedSnackBar(String message){
+        removedSnackbar = Snackbar
+                .make(coordinatorLayout, message + " removed", Snackbar.LENGTH_LONG)
+                .setActionTextColor(context.getResources().getColor(R.color.header_background))
+                .setAction("HIDE", new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        removedSnackbar.dismiss();
+                    }
+                });
+
+        View snackbarView = removedSnackbar.getView();
+        TextView textView = (TextView) snackbarView.findViewById(android.support.design.R.id.snackbar_text);
+        textView.setTextColor(Color.RED);
+
+        removedSnackbar.show();
+    }
+
     @Override
     public void onDrawerItemClicked(String category, String action) {
         drawer.closeDrawers();
@@ -221,11 +262,13 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                     for (Layer l : mAdapter.getLayers()){
                         if(l.getCategory().equals(Constants.LAYER_WEATHER_CONTOUR)){
                             Log.d("MainActivity", "DELETING");
+                            showRemovedSnackBar(action);
                             mAdapter.getLayers().remove(x);
                         }
                         x++;
                     }
                 }else {
+                    showSnackBar(action);
                     applyContour(action);
 
                     Layer layer = new Layer();
@@ -259,6 +302,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                     for (int x = mAdapter.getLayers().size() - 1; x > -1; x--){
                         if(mAdapter.getLayers().get(x).getCategory().equals(Constants.LAYER_WEATHER_DOPPLER)){
                             if(mAdapter.getLayers().get(x).getAction().equals(action)){
+                                showRemovedSnackBar(action);
                                 removeDopplerFromMap(action);
                                 mAdapter.getLayers().remove(x);
                                 Log.d("MainActivity", "Doppler removed: ");
@@ -266,6 +310,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                         }
                     }
                 }else {
+                    showSnackBar(action);
                     Layer layer = new Layer();
                     layer.setAction(action);
                     layer.setCategory(category);
@@ -291,11 +336,13 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                     for (Layer l : mAdapter.getLayers()){
                         if(l.getCategory().equals(Constants.LAYER_WEATHER_SATELLITE)){
                             Log.d("MainActivity", "DELETING");
+                            showRemovedSnackBar(action);
                             mAdapter.getLayers().remove(x);
                         }
                         x++;
                     }
                 }else {
+                    showSnackBar(action);
                     applySatellite(action);
 
                     Layer layer = new Layer();
@@ -320,6 +367,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                         if(mAdapter.getLayers().get(x).getCategory().equals(Constants.LAYER_WEATHER_FORECAST)){
                             if(mAdapter.getLayers().get(x).getAction().equals(action)){
                                 removeDopplerFromMap(action);
+                                showRemovedSnackBar(action);
                                 mAdapter.getLayers().remove(x);
                                 Log.d("MainActivity", "Weather Forecast removed: ");
 
@@ -336,6 +384,7 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                         }
                     }
                 }else{
+                    showSnackBar(action);
                     Layer layer = new Layer();
                     layer.setAction(action);
                     layer.setCategory(category);
@@ -356,13 +405,14 @@ public class MainActivity extends AppCompatActivity implements OnMapReadyCallbac
                         if(mAdapter.getLayers().get(x).getCategory().equals(Constants.LAYER_SENSORS)){
                             if(mAdapter.getLayers().get(x).getAction().equals(action)){
                                 removeSensorMarkers(action);
-
+                                showRemovedSnackBar(action);
                                 mAdapter.getLayers().remove(x);
                                 Log.d("MainActivity", "Sensor removed: ");
                             }
                         }
                     }
                 }else{
+                    showSnackBar(action);
                     Layer layer = new Layer();
                     layer.setAction(action);
                     layer.setCategory(category);
