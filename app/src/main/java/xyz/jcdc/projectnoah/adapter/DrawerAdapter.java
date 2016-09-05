@@ -525,7 +525,7 @@ public class DrawerAdapter  extends RecyclerView.Adapter<DrawerAdapter.ViewHolde
                 @Override
                 public void onClick(View view) {
                     onDrawerItemClickedListener.onDrawerItemClicked(Constants.LAYER_SENSORS, Constants.ACTION_SENSORS_RAIN_GAUGE);
-
+                    isSensorLayerActive(sensorsViewHolder.subItems);
                 }
             });
 
@@ -533,7 +533,7 @@ public class DrawerAdapter  extends RecyclerView.Adapter<DrawerAdapter.ViewHolde
                 @Override
                 public void onClick(View view) {
                     onDrawerItemClickedListener.onDrawerItemClicked(Constants.LAYER_SENSORS, Constants.ACTION_SENSORS_WEATHER);
-
+                    isSensorLayerActive(sensorsViewHolder.subItems);
                 }
             });
 
@@ -541,7 +541,7 @@ public class DrawerAdapter  extends RecyclerView.Adapter<DrawerAdapter.ViewHolde
                 @Override
                 public void onClick(View view) {
                     onDrawerItemClickedListener.onDrawerItemClicked(Constants.LAYER_SENSORS, Constants.ACTION_SENSORS_TIDE_LEVELS);
-
+                    isSensorLayerActive(sensorsViewHolder.subItems);
                 }
             });
 
@@ -549,7 +549,7 @@ public class DrawerAdapter  extends RecyclerView.Adapter<DrawerAdapter.ViewHolde
                 @Override
                 public void onClick(View view) {
                     onDrawerItemClickedListener.onDrawerItemClicked(Constants.LAYER_SENSORS, Constants.ACTION_SENSORS_RAIN_AND_STREAM_GAUGE);
-
+                    isSensorLayerActive(sensorsViewHolder.subItems);
                 }
             });
 
@@ -557,7 +557,7 @@ public class DrawerAdapter  extends RecyclerView.Adapter<DrawerAdapter.ViewHolde
                 @Override
                 public void onClick(View view) {
                     onDrawerItemClickedListener.onDrawerItemClicked(Constants.LAYER_SENSORS, Constants.ACTION_SENSORS_STREAM_GAUGE);
-
+                    isSensorLayerActive(sensorsViewHolder.subItems);
                 }
             });
 
@@ -609,6 +609,19 @@ public class DrawerAdapter  extends RecyclerView.Adapter<DrawerAdapter.ViewHolde
     }
 
     private void isWeatherForecastActive(LinearLayout parent){
+        for (int x=0; x<parent.getChildCount(); x++){
+            TextView v = (TextView) parent.getChildAt(x);
+            v.setTextColor(Color.BLACK);
+            for (Layer layer : layers){
+                Log.d("DrawerAdapter", layer.getAction());
+                if(layer.getAction().equals(v.getTag())){
+                    v.setTextColor(Color.RED);
+                }
+            }
+        }
+    }
+
+    private void isSensorLayerActive(LinearLayout parent){
         for (int x=0; x<parent.getChildCount(); x++){
             TextView v = (TextView) parent.getChildAt(x);
             v.setTextColor(Color.BLACK);
