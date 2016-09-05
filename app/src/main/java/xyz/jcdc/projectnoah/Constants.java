@@ -22,14 +22,14 @@ public class Constants {
     public static final String FLOOD_HAZARD = "http://noah.dost.gov.ph/flood/floodhazards";
 
     public static final String LAYER_WEATHER_CONTOUR = "weather_contour";
-    public static final String ACTION_WEATHER_CONTOUR_1 = "1_hour_rainfall_contour";
-    public static final String ACTION_WEATHER_CONTOUR_3 = "3_hour_rainfall_contour";
-    public static final String ACTION_WEATHER_CONTOUR_6 = "6_hour_rainfall_contour";
-    public static final String ACTION_WEATHER_CONTOUR_12 = "12_hour_rainfall_contour";
-    public static final String ACTION_WEATHER_CONTOUR_24 = "24_hour_rainfall_contour";
-    public static final String ACTION_WEATHER_CONTOUR_TEMPERATURE = "temperature_contour";
-    public static final String ACTION_WEATHER_CONTOUR_PRESSURE = "pressure_contour";
-    public static final String ACTION_WEATHER_CONTOUR_HUMIDITY = "humidity_contour";
+    public static final String ACTION_WEATHER_CONTOUR_1 = "1 Hour Rainfall Contour";
+    public static final String ACTION_WEATHER_CONTOUR_3 = "3 Hour Rainfall Contour";
+    public static final String ACTION_WEATHER_CONTOUR_6 = "6 Hour Rainfall Contour";
+    public static final String ACTION_WEATHER_CONTOUR_12 = "12 Hour Rainfall Contour";
+    public static final String ACTION_WEATHER_CONTOUR_24 = "24 Hour Rainfall Contour";
+    public static final String ACTION_WEATHER_CONTOUR_TEMPERATURE = "Temperature Contour";
+    public static final String ACTION_WEATHER_CONTOUR_PRESSURE = "Pressure Contour";
+    public static final String ACTION_WEATHER_CONTOUR_HUMIDITY = "Humidity Contour";
 
     public static final String LAYER_WEATHER_DOPPLER = "weather_doppler";
     public static final String ACTION_WEATHER_DOPPLER_BAGUIO = "Baguio Station";
